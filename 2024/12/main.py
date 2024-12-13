@@ -1,52 +1,37 @@
 import lib.aoc
+import lib.grid
 
 input_content = lib.aoc.get_current_input()
-lines = input_content.split('\n')
-
-map_height = len(lines)
-map_width = len(lines[0])
-
-def add_coordinates(coords, offset):
-    x, y = coords
-    ox, oy = offset
-    return (x + ox, y + oy)
-
-def in_bounds(coords):
-    x, y = coords
-    return 0 <= x < map_width and 0 <= y < map_height
-
-
-def get_value(coords):
-    x, y = coords
-    return lines[y][x]
-
+grid = lib.grid.FixedGrid.parse(input_content)
 
 def flood_fill(coords):
     result = []
     visited_coords = {}
-    crop = get_value(coords)
+    crop = grid[coords]
 
     queue = [coords]
     while len(queue) > 0:
         current_position = queue.pop(0)
-        current_crop = get_value(current_position)
+        x, y = current_position
+        current_crop = grid[current_position]
         if current_crop != crop or current_position in result:
             continue
         result.append(current_position)
-        for offset in adjacent_offsets:
-            new_position = add_coordinates(current_position, offset)
-            if not in_bounds(new_position) or new_position in visited_coords:
+        neighbors = grid.neighbors(x, y)
+        for neighbor in neighbors:
+            if neighbor in visited_coords:
                 continue
-            queue.append(new_position)
-            visited_coords[current_position] = True
+            queue.append(neighbor)
+            visited_coords[neighbor] = True
     return result
 
 
 def calculate_perimeter(region):
     region_perimeter = 0
     for plot in region:
-        for offset in adjacent_offsets:
-            new_position = add_coordinates(plot, offset)
+        x, y = plot
+        for dx, dy in adjacent_offsets:
+            new_position = (x + dx, y + dy)
             region_perimeter += new_position not in region
     return region_perimeter
 
@@ -68,7 +53,7 @@ def calculate_discount_perimeter(region):
     return sides
 
 
-visited = {}
+visited = set()
 regions = []
 
 adjacent_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
@@ -76,14 +61,13 @@ adjacent_offsets = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 s = 0
 s2 = 0
 
-for i in range(map_height):
-    for j in range(map_width):
-        if (j, i) in visited:
+for coords, v in grid.items():
+        if coords in visited:
             continue
-        region = flood_fill((j, i))
+        region = flood_fill(coords)
         regions.append(region)
         for pos in region:
-            visited[pos] = True
+            visited.add(pos)
 
 for region in regions:
     area = len(region)

@@ -1,42 +1,30 @@
 import lib.aoc
+import lib.grid
 
 input_content = lib.aoc.get_current_input()
-lines = input_content.split('\n')
+grid = lib.grid.FixedGrid.parse(input_content)
 
 visited = {}
 guard_position = (0, 0)
 
-map_height = len(lines)
-map_width = len(lines[0])
-
 directions = [(0, -1), (1, 0), (0, 1), (-1, 0)]
 guard_direction = directions[0]
 
-
-def in_bounds(coords):
-    x, y = coords
-    return 0 <= x < map_width and 0 <= y < map_height
-
-
-def add_coordinates(coords, offset):
-    x, y = coords
-    ox, oy = offset
-    return (x + ox, y + oy)
-
-
 neighbor = dict()
 blocks = set()
-nodes = [(x, y, d) for x in range(map_width) for y in range(map_height) for d in range(4)]
+nodes = [(x, y, d) for x in grid.x_range for y in grid.y_range for d in range(4)]
 
-for x, y in [(x, y) for x in range(map_width) for y in range(map_height)]:
-    if lines[y][x] == '#':
-        blocks.add((x, y))
-    elif lines[y][x] == '^':
-        start_pos = (x, y, 0)
+start_x, start_y = grid.find('^')
+start_pos = (start_x, start_y, 0)
+
+grouped = grid.coords_by_value()
+for coords in grouped['#']:
+    blocks.add(coords)
 
 for x, y, d in nodes:
-    new_neighbor = add_coordinates((x, y), directions[d])
-    if not in_bounds(new_neighbor):
+    dx, dy = directions[d]
+    new_neighbor = (x + dx, y + dy)
+    if new_neighbor not in grid:
         neighbor[(x, y, d)] = (-1, -1, -1)
     elif new_neighbor in blocks:
         neighbor[(x, y, d)] = (x, y, (d + 1) % 4)
@@ -75,9 +63,9 @@ for idx, pos in enumerate(original_path[1:], 1):
         prev = (x - directions[d][0], y - directions[d][1], d)
         neighbor[prev] = (pos[0], pos[1], d)
 
-neighbor = [[[(x, y, d) for d in range(4)] for y in range(map_height)] for x in range(map_width)]
-blocks = [[False for y in range(map_height)] for x in range(map_width)]
-nodes = [(x, y, d) for x in range(map_width) for y in range(map_height) for d in range(4)]
+neighbor = [[[(x, y, d) for d in range(4)] for y in grid.y_range] for x in grid.x_range]
+blocks = [[False for y in grid.y_range] for x in grid.x_range]
+nodes = [(x, y, d) for x in grid.x_range for y in grid.y_range for d in range(4)]
 
 s = len(original_visited)
 s2 = len(loop_obstacles)
