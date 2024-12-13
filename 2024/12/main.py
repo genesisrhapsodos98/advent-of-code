@@ -1,7 +1,6 @@
-from debugpy.common.timestamp import current
+import lib.aoc
 
-input_file = open('.\\input.txt', 'r')
-input_content = input_file.read()
+input_content = lib.aoc.get_current_input()
 lines = input_content.split('\n')
 
 map_height = len(lines)
@@ -93,5 +92,5 @@ for region in regions:
     s += area * perimeter
     s2 += area * discount_perimeter
 
-print(s)
-print(s2)
+lib.aoc.give_answer_current(1, s)
+lib.aoc.give_answer_current(2, s2)

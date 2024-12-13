@@ -1,5 +1,6 @@
-input_file = open(".\\input.txt", "r")
-input_content = input_file.read()
+import lib.aoc
+
+input_content = lib.aoc.get_current_input()
 lines = input_content.split('\n')
 
 pairs = [line.split('   ') for line in lines]
@@ -28,6 +29,9 @@ def part_2(left, right):
         s += num * appearance
     return s
 
+r1 = part_1(left[:], right[:])
+r2 = part_2(left[:], right[:])
 
-print(part_1(left[:], right[:]))
-print(part_2(left[:], right[:]))
+lib.aoc.give_answer_current(1, r1)
+lib.aoc.give_answer_current(2, r2)
+

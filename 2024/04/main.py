@@ -1,5 +1,6 @@
-input_file = open(".\\input.txt", "r")
-input_content = input_file.read()
+import lib.aoc
+
+input_content = lib.aoc.get_current_input()
 lines = input_content.split('\n')
 
 
@@ -53,5 +54,5 @@ for x in range(len(matrix)):
         s += c
         s2 += cx
 
-print(s)
-print(s2)
+lib.aoc.give_answer_current(1, s)
+lib.aoc.give_answer_current(2, s2)

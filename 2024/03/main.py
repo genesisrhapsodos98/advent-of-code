@@ -1,7 +1,7 @@
 import re
+import lib.aoc
 
-input_file = open(".\\input.txt", "r")
-input_content = input_file.read()
+input_content = lib.aoc.get_current_input()
 lines = input_content.split('\n')
 
 valid_commands = []
@@ -18,8 +18,6 @@ s = 0
 for command in [command for command in valid_commands if command[0] != '' and command[1] != '']:
     s += int(command[0]) * int(command[1])
 
-print(s)
-
 current_index = 0
 for i in dont_indexes:
     if i < current_index:
@@ -34,4 +32,5 @@ s2 = 0
 for command in [command for command in valid_commands if command[0] != '' and command[1] != '']:
     s2 += int(command[0]) * int(command[1])
 
-print(s2)
+lib.aoc.give_answer_current(1, s)
+lib.aoc.give_answer_current(2, s2)

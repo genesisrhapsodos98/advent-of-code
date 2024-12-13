@@ -1,5 +1,6 @@
-input_file = open(".\\input.txt", "r")
-input_content = input_file.read()
+import lib.aoc
+
+input_content = lib.aoc.get_current_input()
 lines = input_content.split('\n')
 
 rules = [line.split(' ') for line in lines]
@@ -35,5 +36,5 @@ def is_safe_with_dampener(rule):
 safe_rules = [rule for rule in rules if is_safe(rule)]
 safe_rules_with_dampener = [rule for rule in rules if is_safe_with_dampener(rule)]
 
-print(len(safe_rules))
-print(len(safe_rules_with_dampener))
+lib.aoc.give_answer_current(1, len(safe_rules))
+lib.aoc.give_answer_current(2, len(safe_rules_with_dampener))
