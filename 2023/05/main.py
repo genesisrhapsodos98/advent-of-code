@@ -17,7 +17,7 @@ def solve(seed_ranges):
                 best_dist = r_len
 
                 for dst, src, length in m:
-                    if src <= start <= src + length:
+                    if src <= start < src + length:
                         offset = start - src
                         rem_length = min(length - offset, r_len)
                         new_ranges.append((dst + offset, rem_length))
@@ -51,9 +51,9 @@ seed_ranges = [(seed, 1) for seed in seeds]
 
 s = solve(seed_ranges)
 
-# seed_ranges = list(zip(seeds[::2], seeds[1::2]))
-#
-# s2 = solve(seed_ranges)
+seed_ranges = list(zip(seeds[::2], seeds[1::2]))
+
+s2 = solve(seed_ranges)
 
 lib.aoc.give_answer_current(1, s)
-# lib.aoc.give_answer_current(2, s2)
+lib.aoc.give_answer_current(2, s2)
