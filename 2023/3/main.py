@@ -1,4 +1,5 @@
-import collections
+import math
+from collections import defaultdict
 
 import lib.aoc
 from lib.grid import FixedGrid
@@ -6,7 +7,7 @@ from lib.grid import FixedGrid
 input_content = lib.aoc.get_current_input()
 grid = FixedGrid.parse(input_content)
 
-symbol_positions = collections.defaultdict(set)
+symbol_positions = defaultdict(set)
 numbers = []
 
 s = 0
@@ -44,6 +45,13 @@ for places in symbol_positions.values():
 
 s = sum(n for n, border in numbers if len(border & symbols) > 0)
 
+gears = defaultdict(list)
+
+for n, border in numbers:
+    for coords in border & symbol_positions['*']:
+        gears[coords].append(n)
+
+s2 = sum(math.prod(gear_nums) for gear_nums in gears.values() if len(gear_nums) == 2)
 
 lib.aoc.give_answer_current(1, s)
-# lib.aoc.give_answer_current(2, s2)
+lib.aoc.give_answer_current(2, s2)
