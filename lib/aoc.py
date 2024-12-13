@@ -16,7 +16,7 @@ import webbrowser
 _s = requests.Session()
 
 _s.headers.update({
-    'User-Agent': 'github.com/morgoth1145/advent-of-code by phogg@novamoon.net'
+    'User-Agent': 'github.com/genesisrhapsodos98/advent-of-code'
 })
 
 _account_selection = None
