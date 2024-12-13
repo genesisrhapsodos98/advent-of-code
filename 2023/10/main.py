@@ -58,7 +58,24 @@ s2 = 0
 loop, steps = find_loop(grid)
 
 s = steps
-s2 = loop
+
+# Count enclosed tiles by tracking parity per row
+# If an odd number of vertical tiles have been seen then any ground tiles
+# are enclosed, otherwise they are outside. This is similar to checking
+# if an arbitrary point is enclosed n an arbitrary polygon.
+for y in grid.y_range:
+    is_enclosed = False
+    for x in grid.x_range:
+        if (x, y) in loop:
+            # Note: | is obviously a vertical pipe
+            # A "complex" vertical pipe must have one of (but not both of)
+            # F and 7. FJ and L7 are "complex" vertical pipes, but F7 and
+            # LJ are both turnarounds and should *not* count!
+            if grid[x,y] in '|F7':
+                is_enclosed = not is_enclosed
+        else:
+            if is_enclosed:
+                s2 += 1
 
 lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
