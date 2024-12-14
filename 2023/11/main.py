@@ -3,37 +3,21 @@ from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
 
-# input_content = """...#......
-# .......#..
-# #.........
-# ..........
-# ......#...
-# .#........
-# .........#
-# ..........
-# .......#..
-# #...#....."""
-
+grid = FixedGrid.parse(input_content)
 lines = input_content.split('\n')
 
-offset = 0
-for x in range(len(lines[0])):
-    col = [line[x + offset] for line in lines]
+empty_cols = set()
+empty_rows = set()
+
+for x in grid.x_range:
+    col = grid.col(x)
     if '#' not in col:
-        for y in range(len(lines)):
-            lines[y] = lines[y][:x + offset] + '.' + lines[y][x + offset:]
-        offset += 1
+        empty_cols.add(x)
 
-offset = 0
-for y in range(len(lines)):
-    row = lines[y + offset]
+for y in grid.y_range:
+    row = grid.row(y)
     if '#' not in row:
-        lines.insert(y + offset, row)
-        offset += 1
-
-input_content = '\n'.join(lines)
-
-grid = FixedGrid.parse(input_content)
+        empty_rows.add(y)
 
 s = 0
 s2 = 0
@@ -41,11 +25,15 @@ s2 = 0
 galaxies = [coord for coord, value in grid.items() if value == '#']
 
 for i in range(len(galaxies) - 1):
-    for j in range(i, len(galaxies)):
+    for j in range(i + 1, len(galaxies)):
         ax, ay = galaxies[i]
         bx, by = galaxies[j]
 
-        s += abs(bx - ax) + abs(by - ay)
+        added_cols = sum([1 for c in range(min(ax, bx), max(ax, bx)) if c in empty_cols])
+        added_rows = sum([1 for r in range(min(ay, by), max(ay, by)) if r in empty_rows])
+
+        s += abs(bx - ax) + abs(by - ay) + added_rows + added_cols
+        s2 += abs(bx - ax) + abs(by - ay) + 999999 * added_rows + 999999 * added_cols
 
 lib.aoc.give_answer_current(1, s)
-# lib.aoc.give_answer_current(2, s2)
+lib.aoc.give_answer_current(2, s2)
