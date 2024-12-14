@@ -1,5 +1,3 @@
-from requests.packages import target
-
 import lib.aoc
 from lib.grid import FixedGrid
 
