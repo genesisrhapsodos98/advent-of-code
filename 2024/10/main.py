@@ -1,8 +1,8 @@
 import lib.aoc
-import lib.grid
+from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
-grid = lib.grid.FixedGrid.parse(input_content, value_fn=int)
+grid = FixedGrid.parse(input_content, value_fn=int)
 
 lines = input_content.split('\n')
 

@@ -1,11 +1,11 @@
 import collections
 
 import lib.aoc
-import lib.grid
+from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
 
-grid = lib.grid.FixedGrid.parse(input_content)
+grid = FixedGrid.parse(input_content)
 
 s = sum(1 for coords, direction in grid.find_matches('XMAS', include_diagonals=True, allow_reverse=True))
 

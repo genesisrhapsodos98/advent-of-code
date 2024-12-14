@@ -1,8 +1,8 @@
 import lib.aoc
-import lib.grid
+from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
-grid = lib.grid.FixedGrid.parse(input_content)
+grid = FixedGrid.parse(input_content)
 
 def flood_fill(coords):
     result = []
