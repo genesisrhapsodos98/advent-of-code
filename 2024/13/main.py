@@ -30,12 +30,12 @@ s = 0
 s2 = 0
 
 def solve_machine(ax, ay, bx, by, px, py):
-    m = (px * by - py * bx) // (ax * by - ay * bx)
-    if m * (ax * by - ay * bx) != (px * by - py * bx):
+    m, m_rem = divmod(px * by - py * bx,  ax * by - ay * bx)
+    if m_rem != 0 or m < 0:
         return 0
 
-    n = (py - ay * m) // by
-    if n * by != (py - ay * m):
+    n, n_rem = divmod(py - ay * m, by)
+    if n_rem != 0 or n < 0:
         return 0
 
     return a_token_cost * m + b_token_cost * n

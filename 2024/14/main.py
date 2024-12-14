@@ -2,26 +2,10 @@ import lib.aoc
 
 input_content = lib.aoc.get_current_input()
 
-# input_content = """p=0,4 v=3,-3
-# p=6,3 v=-1,-3
-# p=10,3 v=-1,2
-# p=2,0 v=2,-1
-# p=0,0 v=1,3
-# p=3,0 v=-2,-2
-# p=7,6 v=-1,-3
-# p=3,0 v=-1,-2
-# p=9,3 v=2,3
-# p=7,3 v=-1,2
-# p=2,4 v=2,-3
-# p=9,5 v=-3,-3"""
-
 lines = input_content.split('\n')
 
 width = 101
 height = 103
-
-# width = 11
-# height = 7
 
 christmas_tree = []
 for i in range(height):
@@ -77,11 +61,13 @@ while True:
     for idx, robot in enumerate(robots):
         robots[idx] = next_turn(robot)
     s2 += 1
+
+    # Very dumb idea but it works
+    # Find the first time every robot is on a unique position
+    # Because if robots are overlapping they won't form a picture
     pos = [robot[0] for robot in robots]
     if len(pos) == len(set(pos)):
         break
-
-print(len(robots))
 
 lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
