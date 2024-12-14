@@ -1,3 +1,5 @@
+import functools
+
 import lib.aoc
 
 input_content = lib.aoc.get_current_input()
@@ -10,7 +12,7 @@ for line in lines:
     conditions = list(map(int, seg_r.split(',')))
     rows.append((seg_l, conditions))
 
-
+@functools.cache
 def count_matches(pattern, condition):
     a = condition[0]
     rest = condition[1:]
@@ -47,7 +49,7 @@ s2 = 0
 
 for row in rows:
     s += solve_row(row)
-    # s2 += solve_row(row, 5)
+    s2 += solve_row(row, 5)
 
 lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
