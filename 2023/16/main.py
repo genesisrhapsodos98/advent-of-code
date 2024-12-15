@@ -4,16 +4,6 @@ import lib.aoc
 from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
-# input_content = """.|...\\....
-# |.-.\\.....
-# .....|-...
-# ........|.
-# ..........
-# .........\\
-# ..../.\\\\..
-# .-.-/..|..
-# .|....-|.\\
-# ..//.|...."""
 grid = FixedGrid.parse(input_content)
 
 def move_next(grid, head):
@@ -52,9 +42,8 @@ def move_next(grid, head):
     result = [r for r in result if r[0] in grid]
     return result
 
-def energize(grid):
-    cur = -1, 0
-    cur_direction = 1, 0
+def energize(grid, start= ((-1, 0), (1, 0))):
+    cur, cur_direction = start
     beams = defaultdict(set)
     energized = set()
 
@@ -81,6 +70,22 @@ s2 = 0
 
 s = energize(grid)
 
-# assert s == 46
+alt_starts = []
+
+for x in grid.x_range:
+    alt_starts.append(((x, -1), (0, 1)))
+    alt_starts.append(((x, grid.height), (0, -1)))
+for y in grid.y_range:
+    alt_starts.append(((-1, y), (1, 0)))
+    alt_starts.append(((grid.width, y), (-1, 0)))
+
+best = s
+for st in alt_starts:
+    energized = energize(grid, st)
+    if energized > best:
+        best = energized
+
+s2 = best
+
 lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
