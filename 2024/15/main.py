@@ -51,6 +51,24 @@ for move in movements:
         grid[nx, ny] = '.'
         x, y = nx, ny
 
+def find_edge(boxes, direction):
+    dx, dy = direction
+    leftmost = min([x for x, y in boxes])
+    rightmost = max([x for x, y in boxes])
+    topmost = min([y for x, y in boxes])
+    bottommost = max([y for x, y in boxes])
+
+    if (dx, dy) == (1, 0):
+        edge = set([pos for pos in boxes if pos[0] == rightmost])
+    elif (dx, dy) == (-1, 0):
+        edge = set([pos for pos in boxes if pos[0] == leftmost])
+    elif (dx, dy) == (0, 1):
+        edge = set([pos for pos in boxes if pos[1] == bottommost])
+    else:
+        edge = set([pos for pos in boxes if pos[1] == topmost])
+
+    return edge
+
 def eval_grid(grid, box_elem='O'):
     boxes_pos = [coord for coord, value in grid.items() if value == box_elem]
     answer = 0
@@ -80,19 +98,7 @@ for move in movements:
         boxes_pos.add((nx, ny))
         boxes_pos.add(other_part)
 
-        leftmost = min([x for x, y in boxes_pos])
-        rightmost = max([x for x, y in boxes_pos])
-        topmost = min([y for x, y in boxes_pos])
-        bottommost = max([y for x, y in boxes_pos])
-
-        if (dx, dy) == (1, 0):
-            edge_boxes = set([pos for pos in boxes_pos if pos[0] == rightmost])
-        elif (dx, dy) == (-1, 0):
-            edge_boxes = set([pos for pos in boxes_pos if pos[0] == leftmost])
-        elif (dx, dy) == (0, 1):
-            edge_boxes = set([pos for pos in boxes_pos if pos[1] == bottommost])
-        else:
-            edge_boxes = set([pos for pos in boxes_pos if pos[1] == topmost])
+        edge_boxes = find_edge(boxes_pos, (dx, dy))
 
         can_move = True
         while len(edge_boxes) > 0:
@@ -117,18 +123,7 @@ for move in movements:
             if len(edge_boxes) == 0:
                 break
 
-            leftmost = min([x for x, y in edge_boxes])
-            rightmost = max([x for x, y in edge_boxes])
-            topmost = min([y for x, y in edge_boxes])
-            bottommost = max([y for x, y in edge_boxes])
-            if (dx, dy) == (1, 0):
-                edge_boxes = set([pos for pos in edge_boxes if pos[0] == rightmost])
-            elif (dx, dy) == (-1, 0):
-                edge_boxes = set([pos for pos in edge_boxes if pos[0] == leftmost])
-            elif (dx, dy) == (0, 1):
-                edge_boxes = set([pos for pos in edge_boxes if pos[1] == bottommost])
-            else:
-                edge_boxes = set([pos for pos in edge_boxes if pos[1] == topmost])
+            edge_boxes = find_edge(edge_boxes, (dx, dy))
 
         if not can_move:
             continue
