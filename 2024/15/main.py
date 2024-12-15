@@ -2,39 +2,6 @@ import lib.aoc
 from lib.grid import FixedGrid
 
 input_content = lib.aoc.get_current_input()
-# input_content = \
-# """##########
-# #..O..O.O#
-# #......O.#
-# #.OO..O.O#
-# #..O@..O.#
-# #O#..O...#
-# #O..O..O.#
-# #.OO.O.OO#
-# #....O...#
-# ##########
-#
-# <vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^
-# vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v
-# ><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<
-# <<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^
-# ^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><
-# ^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^
-# >^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^
-# <><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>
-# ^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>
-# v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^"""
-#
-# input_content = \
-# """#######
-# #...#.#
-# #.....#
-# #..OO@#
-# #..O..#
-# #.....#
-# #######
-#
-# <vv<<^^<<^^"""
 
 grid_content, movements_content = input_content.split('\n\n')
 new_grid_content = (grid_content
@@ -93,15 +60,10 @@ def eval_grid(grid, box_elem='O'):
 
 s = eval_grid(grid)
 
-# assert s == 10092, f'{s} is not 10092'
-# assert s == 2028, f'{s} is not 2028'
-
 x, y = new_grid.find('@')
 new_grid[x, y] = '.'
 
 for move in movements:
-    # new_grid.print(line_spacing='')
-    # print(f'{move}')
     dx, dy = moves[move]
     nx, ny = x + dx, y + dy
 
@@ -181,10 +143,7 @@ for move in movements:
             new_grid[pos] = elem
         x, y = nx, ny
 
-new_grid.print()
 s2 = eval_grid(new_grid, '[')
-
-# assert s2 == 9021, f'{s2} is not 9021'
 
 lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
