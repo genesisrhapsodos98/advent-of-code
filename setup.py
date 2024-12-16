@@ -22,18 +22,14 @@ def get_template(year, day):
 ##    grid = lib.grid.FixedGrid.parse(s,
 ##                                    linesplit_fn=lambda line: line.split(),
 ##                                    value_fn=int)
-    print(f'The answer to part one is {{answer}}')
-    if input('Submit answer? ').lower() in ('y', 'yes', '1'):
-        assert(lib.aoc.give_answer_current(1, answer))'''
+    lib.aoc.give_answer_current(1, answer)'''
     if day == 25:
         part_2_template = f'''def part2(s):
     print('There is no part two for Christmas!')'''
     else:
         part_2_template = f'''def part2(s):
     pass
-##    print(f'The answer to part two is {{answer}}')
-##    if input('Submit answer? ').lower() in ('y', 'yes', '1'):
-##        assert(lib.aoc.give_answer_current(2, answer))'''
+##    lib.aoc.give_answer_current(2, answer)'''
     return f'''import collections
 import functools
 import itertools

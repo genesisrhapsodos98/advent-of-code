@@ -9,6 +9,10 @@ import lib.aoc
 import lib.graph
 import lib.grid
 
+Part = collections.namedtuple('Part',
+                              ('x', 'm', 'a', 's'))
+
+
 def parse_input(s):
     s_workflows, s_ratings = s.split('\n\n')
     workflows = defaultdict(list)
@@ -33,6 +37,7 @@ def parse_input(s):
 
     return workflows, ratings
 
+
 def solve_rule(workflow, rating):
     for rule in workflow:
         target, op, num, to = rule
@@ -41,12 +46,14 @@ def solve_rule(workflow, rating):
             return to
 
         t_num = rating[target]
-        condition =  (t_num > num) if op == '>' else (t_num < num)
+        condition = (t_num > num) if op == '>' else (t_num < num)
         if condition:
             return to
 
+
 def evaluate(rating: dict):
     return sum(rating.values())
+
 
 def part1(s):
     workflows, ratings = parse_input(s)
@@ -60,15 +67,63 @@ def part1(s):
         if cur == 'A':
             answer += evaluate(rating)
 
-    print(f'The answer to part one is {answer}')
-    if input('Submit answer? ').lower() in ('y', 'yes', '1'):
-        assert(lib.aoc.give_answer_current(1, answer))
+    lib.aoc.give_answer_current(1, answer)
+
+
+def filter_rule(rule, part: Part):
+    target, op, num, to = rule
+    if target is None:
+        return part, None
+
+    filter_good = (lambda v: v[:v.index(num)]) if op == '<' else (lambda v: v[v.index(num) + 1:])
+    filter_bad = (lambda v: v[v.index(num):]) if op == '<' else (lambda v: v[:v.index(num) + 1])
+    test = (lambda n: n < num) if op == '<' else (lambda n: n > num)
+
+    vals = getattr(part, target)
+    if num in vals:
+        good = part._replace(**{target: filter_good(vals)})
+        bad = part._replace(**{target: filter_bad(vals)})
+        return good, bad
+    elif len(vals) > 0:
+        if test(vals[0]):
+            return part, part._replace(**{target: range(0)})
+        else:
+            return part._replace(**{target: range(0)}), part
+    else:
+        return part, part
+
+
+def walk_rule(workflows, label, part: Part):
+    if label == 'A':
+        return len(part.x) * len(part.m) * len(part.a) * len(part.s)
+    if label == 'R':
+        return 0
+
+    count = 0
+
+    for rule in workflows[label]:
+        target, op, num, to = rule
+        good, part = filter_rule(rule, part)
+        if good is not None:
+            count += walk_rule(workflows, to, good)
+        if part is None:
+            break
+
+    return count
+
 
 def part2(s):
-    pass
-##    print(f'The answer to part two is {answer}')
-##    if input('Submit answer? ').lower() in ('y', 'yes', '1'):
-##        assert(lib.aoc.give_answer_current(2, answer))
+    workflows, _ = parse_input(s)
+
+    start_label = 'in'
+
+    answer = walk_rule(workflows, start_label, Part(
+        range(1, 4000),
+        range(1, 4000),
+        range(1, 4000),
+        range(1, 4000)))
+    lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
