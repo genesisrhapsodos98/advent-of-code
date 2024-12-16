@@ -1,11 +1,7 @@
-import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
+
 
 def part1(s):
     grid = lib.grid.FixedGrid.parse(s)
@@ -38,6 +34,7 @@ def part1(s):
     answer = lib.graph.dijkstra_length_fuzzy_end(graph, (start, start_dir), end_fn)
 
     lib.aoc.give_answer_current(1, answer)
+
 
 def part2(s):
     grid = lib.grid.FixedGrid.parse(s)
@@ -90,7 +87,7 @@ def part2(s):
         best_cost[state] = cost
 
         if end_fn(state):
-            assert(cost == min_length)
+            assert (cost == min_length)
             best_path_positions.add(state[0])
             result_cache[state, cost] = True
             return True
@@ -113,6 +110,7 @@ def part2(s):
 
     answer = len(best_path_positions)
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
