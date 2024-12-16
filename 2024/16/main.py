@@ -69,50 +69,49 @@ def part2(s):
 
     min_length = lib.graph.dijkstra_length_fuzzy_end(graph, (start, start_dir), end_fn)
 
-    on_best_path = set()
+    best_path_positions = set()
 
-    best_seen = {}
-    known_retvals = {}
+    best_cost = {}
+    result_cache = {}
 
-    def impl(state, cost):
-        retval = known_retvals.get((state, cost))
-        if retval is not None:
-            return retval
+    def walk_best_path(state, cost):
+        result = result_cache.get((state, cost))
+        if result is not None:
+            return result
 
         if cost > min_length:
-            known_retvals[state, cost] = False
+            result_cache[state, cost] = False
             return False
 
-        if best_seen.get(state, cost) < cost:
-            known_retvals[state, cost] = False
+        if best_cost.get(state, cost) < cost:
+            result_cache[state, cost] = False
             return False
 
-        best_seen[state] = cost
+        best_cost[state] = cost
 
         if end_fn(state):
             assert(cost == min_length)
-            on_best_path.add(state[0])
-            known_retvals[state, cost] = True
+            best_path_positions.add(state[0])
+            result_cache[state, cost] = True
             return True
 
         if cost == min_length:
-            known_retvals[state, cost] = False
+            result_cache[state, cost] = False
             return False
 
-        is_good = False
+        is_on_best_path = False
 
         for neighbor, n_cost in graph[state]:
-            if impl(neighbor, cost + n_cost):
-                on_best_path.add(state[0])
-                is_good = True
+            if walk_best_path(neighbor, cost + n_cost):
+                best_path_positions.add(state[0])
+                is_on_best_path = True
 
-        known_retvals[state, cost] = is_good
-        return is_good
+        result_cache[state, cost] = is_on_best_path
+        return is_on_best_path
 
-    impl((start, start_dir), 0)
+    walk_best_path((start, start_dir), 0)
 
-    answer = len(on_best_path)
-
+    answer = len(best_path_positions)
     lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
