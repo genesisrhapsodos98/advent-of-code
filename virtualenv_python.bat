@@ -1,1 +1,1 @@
-".\.venv\Scripts\python" %*
+".\venv\Scripts\python" %*

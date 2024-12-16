@@ -8,7 +8,7 @@ def error_exit(msg):
     os.system('pause')
     sys.exit(-1)
 def open_editor(path):
-    # Opens the IDLE editor for the path requested. This is done with a
+    # Opens the PyCharm editor for the path requested. This is done with a
     # separate command window so that when this program closes its command
     # window can cleanly disappear
     subprocess.Popen(['start', 'cmd', '/c', 'editor.bat', path],
