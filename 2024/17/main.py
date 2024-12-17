@@ -98,20 +98,18 @@ def part2(s):
     flipped = bottom.split(': ')[1][::-1]
 
     answer = ''
-    with open('output.txt', 'w') as f:
-        while flipped != answer:
-            a, b, c = na, ob, oc
+    while flipped != answer:
+        a, b, c = na, ob, oc
 
-            matching = 0
-            answer = run_program(a, b, c, program)[::-1]
-            for i in range(len(flipped))[::2]:
-                l, r = flipped[i], answer[i]
-                if l != r:
-                    break
-                matching += 1
-            step = math.ceil((8 ** (len(program) - matching - 1)))
-            f.write(f'a={na}, {answer}\n')
-            na += step
+        matching = 0
+        answer = run_program(a, b, c, program)[::-1]
+        for i in range(len(flipped))[::2]:
+            l, r = flipped[i], answer[i]
+            if l != r:
+                break
+            matching += 1
+        step = math.ceil((8 ** (len(program) - matching - 1)))
+        na += step
     lib.aoc.give_answer_current(2, a)
 
 INPUT = lib.aoc.get_current_input()
