@@ -1,11 +1,7 @@
-import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
+
 
 def resolve_combo(operand, a, b, c):
     match operand:
@@ -20,20 +16,24 @@ def resolve_combo(operand, a, b, c):
         case _:
             assert False
 
+
 def adv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return result, b, c, instr + 2
+
 
 def bxl(operand, a, b, c, instr, output):
     l, r = b, operand
     result = l ^ r
     return a, result, c, instr + 2
 
+
 def bst(operand, a, b, c, instr, output):
     num = resolve_combo(operand, a, b, c)
     result = num % 8
-    return a, result ,c, instr + 2
+    return a, result, c, instr + 2
+
 
 def jnz(operand, a, b, c, instr, output):
     if a == 0:
@@ -41,9 +41,11 @@ def jnz(operand, a, b, c, instr, output):
     instr = operand
     return a, b, c, instr
 
+
 def bxc(operand, a, b, c, instr, output):
     result = b ^ c
     return a, result, c, instr + 2
+
 
 def out(operand, a, b, c, instr, output):
     combo = resolve_combo(operand, a, b, c)
@@ -51,25 +53,30 @@ def out(operand, a, b, c, instr, output):
     output.append(str(result))
     return a, b, c, instr + 2
 
+
 def bdv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return a, result, c, instr + 2
+
 
 def cdv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return a, b, result, instr + 2
 
+
 instructions = [adv, bxl, bst, jnz, bxc, out, bdv, cdv]
+
 
 def part1(s):
     top, bottom = s.split('\n\n')
-    a, b, c = [int(line.split(': ')[1])for line in top.splitlines()]
+    a, b, c = [int(line.split(': ')[1]) for line in top.splitlines()]
     program = list(map(int, bottom.split(':')[1].split(',')))
 
     answer = run_program(a, b, c, program)
     lib.aoc.give_answer_current(1, answer)
+
 
 def run_program(a, b, c, program):
     output = []
@@ -87,9 +94,10 @@ def run_program(a, b, c, program):
 
     return ','.join(output)
 
+
 def part2(s):
     top, bottom = s.split('\n\n')
-    oa, ob, oc = [int(line.split(': ')[1])for line in top.splitlines()]
+    oa, ob, oc = [int(line.split(': ')[1]) for line in top.splitlines()]
     program = list(map(int, bottom.split(':')[1].split(',')))
 
     # Starting a determines the length of the result
@@ -116,8 +124,11 @@ def part2(s):
                 break
             matching += 1
         step = 8 ** (len(program) - matching - 1)
+        if step < 1:
+            break
         na += step
-    lib.aoc.give_answer_current(2, a)
+    lib.aoc.give_answer_current(2, na)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
