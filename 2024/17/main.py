@@ -100,12 +100,12 @@ def part2(s):
     oa, ob, oc = [int(line.split(': ')[1]) for line in top.splitlines()]
     program = list(map(int, bottom.split(':')[1].split(',')))
 
-    # Starting a determines the length of the result
-    # In order to have a result of length L, a must be from 8 ** (L - 1) to 8 ** L - 1
+    # Starting 'a' determines the length of the result
+    # In order to have a result of length L, 'a' must be from 8 ** (L - 1) to 8 ** L - 1
     # The nth digit from the right of the result changes every 8 ** (L - n) - 1
     # So in order to find the first occurrence of <program> in result,
-    # we need to start from 8 ** (L - 1)
-    # then we increase a by 8 ** (L - n) where n is the number of matching digits from right to left,
+    # we need to start 'a' from 8 ** (L - 1)
+    # then we increase 'a' by 8 ** (L - n) where n is the number of matching digits from right to left,
     # stopping as soon as we see a complete match between answer and program
     start = 8 ** (len(program) - 1)
     na = start
