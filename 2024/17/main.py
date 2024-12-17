@@ -20,45 +20,43 @@ def resolve_combo(operand, a, b, c):
         case _:
             assert False
 
-output = []
-
-def adv(operand, a, b, c, instr):
+def adv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return result, b, c, instr + 2
 
-def bxl(operand, a, b, c, instr):
+def bxl(operand, a, b, c, instr, output):
     l, r = b, operand
     result = l ^ r
     return a, result, c, instr + 2
 
-def bst(operand, a, b, c, instr):
+def bst(operand, a, b, c, instr, output):
     num = resolve_combo(operand, a, b, c)
     result = num % 8
     return a, result ,c, instr + 2
 
-def jnz(operand, a, b, c, instr):
+def jnz(operand, a, b, c, instr, output):
     if a == 0:
         return a, b, c, instr + 2
     instr = operand
     return a, b, c, instr
 
-def bxc(operand, a, b, c, instr):
+def bxc(operand, a, b, c, instr, output):
     result = b ^ c
     return a, result, c, instr + 2
 
-def out(operand, a, b, c, instr):
+def out(operand, a, b, c, instr, output):
     combo = resolve_combo(operand, a, b, c)
     result = combo % 8
     output.append(str(result))
     return a, b, c, instr + 2
 
-def bdv(operand, a, b, c, instr):
+def bdv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return a, result, c, instr + 2
 
-def cdv(operand, a, b, c, instr):
+def cdv(operand, a, b, c, instr, output):
     num, denom = a, 2 ** resolve_combo(operand, a, b, c)
     result = num // denom
     return a, b, result, instr + 2
@@ -70,19 +68,51 @@ def part1(s):
     a, b, c = [int(line.split(': ')[1])for line in top.splitlines()]
     program = list(map(int, bottom.split(':')[1].split(',')))
 
+    answer = run_program(a, b, c, program)
+    lib.aoc.give_answer_current(1, answer)
+
+def run_program(a, b, c, program):
+    output = []
     cur = 0
+    visited = set()
     while 0 <= cur < len(program):
+        state = (a, b, c, cur)
+        if state in visited:
+            break
+        visited.add(state)
         op_code = program[cur]
         operand = program[cur + 1]
         instruction = instructions[op_code]
-        a, b, c, cur = instruction(operand, a, b, c, cur)
+        a, b, c, cur = instruction(operand, a, b, c, cur, output)
 
-    answer = ','.join(output)
-    lib.aoc.give_answer_current(1, answer)
+    return ','.join(output)
 
 def part2(s):
-    pass
-##    lib.aoc.give_answer_current(2, answer)
+    top, bottom = s.split('\n\n')
+    oa, ob, oc = [int(line.split(': ')[1])for line in top.splitlines()]
+    program = list(map(int, bottom.split(':')[1].split(',')))
+
+    start = 8 ** (len(program) - 1)
+    na = start
+
+    flipped = bottom.split(': ')[1][::-1]
+
+    answer = ''
+    with open('output.txt', 'w') as f:
+        while flipped != answer:
+            a, b, c = na, ob, oc
+
+            matching = 0
+            answer = run_program(a, b, c, program)[::-1]
+            for i in range(len(flipped))[::2]:
+                l, r = flipped[i], answer[i]
+                if l != r:
+                    break
+                matching += 1
+            step = math.ceil((8 ** (len(program) - matching - 1)))
+            f.write(f'a={na}, {answer}\n')
+            na += step
+    lib.aoc.give_answer_current(2, a)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
