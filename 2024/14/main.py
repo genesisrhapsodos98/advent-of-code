@@ -7,16 +7,6 @@ lines = input_content.split('\n')
 width = 101
 height = 103
 
-christmas_tree = []
-for i in range(height):
-    start = i
-    end = width - i
-    y = height - i
-    christmas_tree.append((start, y))
-    christmas_tree.append((end, y))
-
-print(len(christmas_tree))
-
 def next_turn(robot):
     p, v = robot
     px, py = p
