@@ -15,13 +15,14 @@ def open_editor(path):
                      shell=True)
 def get_template(year, day):
     part_1_template = f'''def part1(s):
-##    nums = list(map(lambda r:r[0], parse.findall('{{:d}}', s)))
-##    lines = s.splitlines()
-##    groups = s.split('\\n\\n')
-##    grid = lib.grid.FixedGrid.parse(s, value_fn=int)
-##    grid = lib.grid.FixedGrid.parse(s,
-##                                    linesplit_fn=lambda line: line.split(),
-##                                    value_fn=int)
+    # nums = list(map(lambda r:r[0], parse.findall('{:d}', s)))
+    # lines = s.splitlines()
+    # groups = s.split('\n\n')
+    # grid = lib.grid.FixedGrid.parse(s, value_fn=int)
+    # grid = lib.grid.FixedGrid.parse(s,
+    #                                linesplit_fn=lambda line: line.split(),
+    #                                value_fn=int)
+    answer = 0
     lib.aoc.give_answer_current(1, answer)'''
     if day == 25:
         part_2_template = f'''def part2(s):
@@ -29,7 +30,8 @@ def get_template(year, day):
     else:
         part_2_template = f'''def part2(s):
     pass
-##    lib.aoc.give_answer_current(2, answer)'''
+    answer = 0
+    # lib.aoc.give_answer_current(2, answer)'''
     return f'''import collections
 import functools
 import itertools
