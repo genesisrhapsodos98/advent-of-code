@@ -33,28 +33,48 @@ def parse_input(s):
     return modules, conjunction_inputs
 
 def send_pulse(modules, conjunction_inputs, target, signal):
-    low, high = 0, 0
-    m_type, dst, state = modules[target]
-    if m_type is None:
-        for m in dst:
-            l, h = send_pulse(modules, m, signal)
-            low += l
-            high += h
-    elif m_type == '%':
-        if signal is True:
-            return low, high
-
-    return low, high
+    pulses = collections.Counter()
+    queue = [(modules, conjunction_inputs, target, signal)]
+    while len(queue) > 0:
+        modules, conjunction_inputs, target, signal = queue.pop(0)
+        pulses[signal] += 1
+        if target not in modules:
+            continue
+        m_type, dst, state = modules[target]
+        if m_type is None:
+            modules[target] = m_type, dst, signal
+            for m in dst:
+                queue.append((modules, conjunction_inputs, m, signal))
+        elif m_type == '%':
+            if signal is True:
+                continue
+            else:
+                state = not state
+                modules[target] = m_type, dst, state
+                for m in dst:
+                    queue.append((modules, conjunction_inputs, m, state))
+        else:
+            conjunctions = [v for k, v in modules.items() if k in conjunction_inputs[target]]
+            all_inputs_high = all([n_state == True for _, _, n_state in conjunctions])
+            if all_inputs_high:
+                modules[target] = m_type, dst, False
+                for m in dst:
+                    queue.append((modules, conjunction_inputs, m, False))
+            else:
+                modules[target] = m_type, dst, True
+                for m in dst:
+                    queue.append((modules, conjunction_inputs, m, True))
+    return pulses
 
 def part1(s):
     modules, conjunction_inputs = parse_input(s)
-    answer = 0
 
-    low, high = 0, 0
+    pulses = collections.Counter()
     for _ in range(1000):
-        l, h = send_pulse(modules, conjunction_inputs, 'broadcaster', False)
-        low += l
-        high += h
+        n_pulses = send_pulse(modules, conjunction_inputs, 'broadcaster', False)
+        pulses += n_pulses
+
+    answer = pulses[True] * pulses[False]
 
     lib.aoc.give_answer_current(1, answer)
 
