@@ -118,10 +118,10 @@ def part2(s):
     start_label = 'in'
 
     answer = walk_rule(workflows, start_label, Part(
-        range(1, 4000),
-        range(1, 4000),
-        range(1, 4000),
-        range(1, 4000)))
+        range(1, 4001),
+        range(1, 4001),
+        range(1, 4001),
+        range(1, 4001)))
     lib.aoc.give_answer_current(2, answer)
 
 
