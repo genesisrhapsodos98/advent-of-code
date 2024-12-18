@@ -45,18 +45,25 @@ def part1(s):
 
 def part2(s):
     lines = s.splitlines()
-    i = 2096
-    can_escape = True
-    while can_escape:
-        print(f'Testing {i}')
-        grid = parse_input(s, i)
-        escape_path = shortest_length(grid)
-        if escape_path == -1:
-            can_escape = False
-        else:
-            i += 1
 
-    answer = lines[i - 1]
+    low, high = 0, len(lines)
+    found = False
+    # Binary search to find idx
+    while not found:
+        mid = (high + low) // 2
+        grid_1 = parse_input(s, mid)
+        grid_2 = parse_input(s, mid+1)
+        escape_path_1 = shortest_length(grid_1)
+        escape_path_2 = shortest_length(grid_2)
+        if escape_path_1 > 0 and escape_path_2 < 0:
+            found = True
+        else:
+            if escape_path_2 > 0:
+                low = mid
+            elif escape_path_1 < 0:
+                high = mid
+
+    answer = lines[mid]
 
     lib.aoc.give_answer_current(2, answer)
 
