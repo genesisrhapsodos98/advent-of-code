@@ -1,13 +1,11 @@
 import collections
-import functools
-import itertools
 import math
-import re
 from collections import defaultdict
 
 import lib.aoc
 import lib.graph
 import lib.grid
+
 
 def parse_input(s):
     lines = s.splitlines()
@@ -29,10 +27,10 @@ def parse_input(s):
         for d in dst:
             conjunction_inputs[d].append(k)
 
-
     return modules, conjunction_inputs
 
-def send_pulse(modules, conjunction_inputs, target, signal, tracked_modules = None):
+
+def send_pulse(modules, conjunction_inputs, target, signal, tracked_modules=None):
     pulses = collections.Counter()
     queue = [(modules, conjunction_inputs, target, signal)]
     tracked_signals = []
@@ -71,6 +69,7 @@ def send_pulse(modules, conjunction_inputs, target, signal, tracked_modules = No
                     queue.append((modules, conjunction_inputs, m, True))
     return pulses, tracked_signals
 
+
 def part1(s):
     modules, conjunction_inputs = parse_input(s)
 
@@ -82,6 +81,7 @@ def part1(s):
     answer = pulses[True] * pulses[False]
 
     lib.aoc.give_answer_current(1, answer)
+
 
 def num_cycles_until_low_output(modules, conjunction_inputs):
     # Assumptions:
@@ -114,7 +114,6 @@ def num_cycles_until_low_output(modules, conjunction_inputs):
     while len(subtree_cycles) < len(subtree_leaves):
         cycle += 1
 
-        # TODO: Very cludgy
         _, tracked_signals = send_pulse(modules, conjunction_inputs, 'broadcaster', False, subtree_leaves)
 
         for leaf in tracked_signals:
@@ -124,11 +123,13 @@ def num_cycles_until_low_output(modules, conjunction_inputs):
 
     return math.lcm(*subtree_cycles.values())
 
+
 def part2(s):
     modules, conjunction_inputs = parse_input(s)
 
     answer = num_cycles_until_low_output(modules, conjunction_inputs)
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
