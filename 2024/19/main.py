@@ -4,20 +4,15 @@ import lib.aoc
 import lib.graph
 import lib.grid
 
-visited = dict()
-
 
 @functools.cache
 def count_reachable(d, patterns):
-    if d in visited:
-        return visited[d]
     if d == '':
         return 1
     matches = [p for p in patterns if d.startswith(p)]
     if len(matches) == 0:
         return 0
     reachable_states = sum([count_reachable(d[len(match):], patterns) for match in matches])
-    visited[d] = reachable_states
     return reachable_states
 
 
