@@ -19,7 +19,6 @@ def part1(s):
 
     count = 0
     for design in designs:
-        print(f'testing {design}')
         initial_state = design
         queue = [initial_state]
         possible = False
@@ -53,9 +52,27 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
+    patterns, designs = parse_input(s)
+
+    visited = dict()
+
+    @functools.cache
+    def count_reachable(d):
+        if d in visited:
+            return visited[d]
+        if d == '':
+            return 1
+        matches = [p for p in patterns if d.startswith(p)]
+        if len(matches) == 0:
+            return 0
+        reachable_states = sum([count_reachable(d[len(match):]) for match in matches])
+        visited[d] = reachable_states
+        return reachable_states
+
     answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    for design in designs:
+        answer += count_reachable(design)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 
