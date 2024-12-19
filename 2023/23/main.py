@@ -126,4 +126,4 @@ def part2(s):
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
-part2(INP
+part2(INPUT)
