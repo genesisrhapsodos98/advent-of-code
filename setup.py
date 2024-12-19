@@ -15,9 +15,9 @@ def open_editor(path):
                      shell=True)
 def get_template(year, day):
     part_1_template = f'''def part1(s):
-    # nums = list(map(lambda r:r[0], parse.findall('{:d}', s)))
+    ## nums = list(map(lambda r:r[0], parse.findall('{{:d}}', s)))
     # lines = s.splitlines()
-    # groups = s.split('\n\n')
+    # groups = s.split('\\n\\n')
     # grid = lib.grid.FixedGrid.parse(s, value_fn=int)
     # grid = lib.grid.FixedGrid.parse(s,
     #                                linesplit_fn=lambda line: line.split(),
