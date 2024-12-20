@@ -1,6 +1,7 @@
-import networkx as nx
-from typing import List, Set, Tuple, Dict
 from itertools import product
+from typing import List, Tuple
+
+import networkx as nx
 
 import lib.aoc
 import lib.graph
@@ -118,7 +119,8 @@ def part2(s: str):
     start, end = find_start_end(grid)
     saved_times = find_all_cheats(grid, start, end, max_cheat_steps=20)
     lib.aoc.give_answer_current(2, len(saved_times))
-    
+
+
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
 part2(INPUT)
