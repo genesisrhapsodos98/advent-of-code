@@ -42,7 +42,7 @@ def longest_minimal_path_length(graph, start):
                 continue
             heapq.heappush(queue, (current_dist + neighbor_dist,
                                    neighbor_node))
-    return current_node, max_dist
+    return furthest_node, max_dist
 
 def all_reachable(graph, start, max_dist=None):
     '''Returns (node, distance) pairs of all reachable nodes in the graph.
