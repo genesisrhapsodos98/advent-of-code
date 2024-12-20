@@ -59,9 +59,25 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
+    brick_ids, supporting_bricks, supported_by = parse_input(s)
+
     answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+
+    for brick in brick_ids:
+        supports_lost = { brick }
+        queue = list(supporting_bricks.get(brick, []))
+
+        while queue:
+            b = queue.pop()
+            if b in supports_lost:
+                continue
+            if all(supporting in supports_lost for supporting in supported_by.get(b, [])):
+                answer += 1
+                supports_lost.add(b)
+
+                queue.extend(supporting_bricks.get(b, []))
+
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
