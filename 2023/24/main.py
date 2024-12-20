@@ -3,6 +3,9 @@ import functools
 import itertools
 import math
 import re
+
+import sympy
+
 import lib.aoc
 import lib.graph
 import lib.grid
@@ -50,10 +53,28 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    hailstones = parse_input(s)
+
+    x = sympy.var('x')
+    y = sympy.var('y')
+    z = sympy.var('z')
+
+    vx = sympy.var('vx')
+    vy = sympy.var('vy')
+    vz = sympy.var('vz')
+
+    equations = []
+
+    for idx, (p, v) in enumerate(hailstones[:3]):
+        t = sympy.var(f't{idx}')
+
+        equations.append(sympy.Eq(x + t * vx, p.x + v.x * t))
+        equations.append(sympy.Eq(y + t * vy, p.y + v.y * t))
+        equations.append(sympy.Eq(z + t * vz, p.z + v.z * t))
+
+    d = sympy.solve(equations)[0]
+    answer = sum(d[v] for v in (x, y, z))
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
