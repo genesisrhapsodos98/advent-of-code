@@ -1,8 +1,3 @@
-import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
@@ -14,9 +9,11 @@ slopes = {
     '^': (0, -1),
 }
 
+
 def solve(grid):
     start_pos = (grid.row(0).index('.'), 0)
     end_pos = (grid.row(grid.height - 1).index('.'), grid.height - 1)
+
     def neighbor_fn(coord):
         handled = {coord}
         queue = [(n, 1) for n in grid.neighbors(*coord) if grid[n] != '#']
@@ -69,15 +66,18 @@ def solve(grid):
     answer = longest_path((start_pos,), end_pos, 0)
     return answer
 
+
 def part1(s):
     grid = lib.grid.FixedGrid.parse(s)
     answer = solve(grid)
     lib.aoc.give_answer_current(1, answer)
 
+
 def part2(s):
     grid = lib.grid.FixedGrid.parse(s.replace('^', '.').replace('>', '.').replace('v', '.').replace('<^>', '.'))
     answer = solve(grid)
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
