@@ -20,7 +20,6 @@ def part1(s):
     end_pos = (grid.width - 2, grid.height - 1)
 
     def neighbor_fn(coord):
-        x, y = coord
         handled = {coord}
         queue = [(n, 1) for n in grid.neighbors(*coord) if grid[n] != '#']
 
@@ -33,6 +32,7 @@ def part1(s):
                 yield coord, d
                 continue
             if grid[coord] in slopes:
+                x, y = coord
                 dx, dy = slopes[grid[coord]]
                 n = (x + dx, y + dy)
                 if n not in handled:
