@@ -1,12 +1,6 @@
-import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graph import all_reachable
 
 
 def part1(s):
@@ -25,6 +19,7 @@ def part1(s):
     answer = len(positions)
 
     lib.aoc.give_answer_current(1, answer)
+
 
 def part2(s):
     grid = lib.grid.FixedGrid.parse(s)
@@ -85,14 +80,14 @@ def part2(s):
     uul, uur, bbl, bbr = 0, 0, 0, 0
 
     for x, y in positions:
-        if 0<=x<grid.width:
-            if 0<=y<grid.height:
+        if 0 <= x < grid.width:
+            if 0 <= y < grid.height:
                 even_count += 1
-            elif grid.height<=y<2*grid.height:
+            elif grid.height <= y < 2 * grid.height:
                 odd_count += 1
-            elif 2*grid.height <= y < 3*grid.height:
+            elif 2 * grid.height <= y < 3 * grid.height:
                 top_count += 1
-            elif -grid.height > y >= -2*grid.height:
+            elif -grid.height > y >= -2 * grid.height:
                 bottom_count += 1
         elif grid.width <= x < 2 * grid.width:
             if grid.height <= y < 2 * grid.height:
@@ -137,6 +132,7 @@ def part2(s):
     answer += supercorners * bbl
 
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
