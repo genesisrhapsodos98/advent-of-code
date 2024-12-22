@@ -39,42 +39,35 @@ def part1(s):
         answer += final
     lib.aoc.give_answer_current(1, answer)
 
+def get_prices(num):
+    prices = [num % 10]
+    current_value = num
+    for _ in range(2000):
+        current_value = randomize(current_value)
+        prices.append(current_value % 10)
+    return prices
+
 def part2(s):
     numbers = parse_input(s)
-    prices = []
-    differences = []
-    answer = 0
-    occurrences = []
-    all_occurrences = set()
 
-    for idx, num in enumerate(numbers):
-        final = num
-        prices.append([num % 10])
-        differences.append([None])
-        occurrences.append(dict())
-        for i in range(2000):
-            final = randomize(final)
-            new_price = final % 10
-            prices[idx].append(new_price)
-            differences[idx].append(new_price - prices[idx][-2])
-            if len(differences[idx]) > 4:
-                key = (differences[idx][-4], differences[idx][-3], differences[idx][-2], differences[idx][-1])
-                all_occurrences.add(key)
-                if key not in occurrences[idx]:
-                    occurrences[idx][key] = new_price
+    total_pattern_profit = collections.Counter()
+    prices = [get_prices(num) for num in numbers]
 
-    best_value = 0
-    for occ in all_occurrences:
-        occ_value = 0
-        for idx, num in enumerate(numbers):
-            if occ not in occurrences[idx]:
+    for price in prices:
+        num_pattern_profit = collections.Counter()
+        price_deltas = [b - a for a, b in zip(price, price[1:])]
+
+        for i in range(len(price)):
+            if i + 4 >= len(price_deltas):
                 continue
-            first_occurrence_price = occurrences[idx][occ]
-            occ_value += first_occurrence_price
-        if occ_value > best_value:
-            best_value = occ_value
+            key = tuple(price_deltas[i + dd] for dd in range(4))
+            if key in num_pattern_profit:
+                continue
+            num_pattern_profit[key] += price[i + 4]
+        total_pattern_profit += num_pattern_profit
 
-    answer = best_value
+    answer = max(total_pattern_profit.values())
+    print(answer)
 
     lib.aoc.give_answer_current(2, answer)
 
