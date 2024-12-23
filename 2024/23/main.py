@@ -1,32 +1,21 @@
-import collections
-import functools
-import itertools
-import math
-import re
-from collections import defaultdict
-from itertools import product
+import networkx as nx
 
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
-import networkx as nx
+
 
 def parse_input(s):
     lines = s.splitlines()
-    pairs = []
-
-    for line in lines:
-        a, b = line.split('-')
-        pairs.append((a, b))
 
     computers = nx.Graph()
-    for pair in pairs:
-        left, right = pair
+    for line in lines:
+        left, right = line.split('-')
         computers.add_edge(left, right)
     computers = computers.to_undirected()
 
     return computers
+
 
 def part1(s):
     computers = parse_input(s)
@@ -36,12 +25,14 @@ def part1(s):
 
     lib.aoc.give_answer_current(1, answer)
 
+
 def part2(s):
     computers = parse_input(s)
     all_cliques = list(nx.enumerate_all_cliques(computers))
     sorted_computers = sorted(all_cliques[-1])
     answer = ','.join(sorted_computers)
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
