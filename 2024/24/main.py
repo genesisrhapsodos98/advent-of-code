@@ -80,7 +80,14 @@ def swap(a, b):
     simulations[b] = tmp
 
 def part2(s):
-    pairs = [('z12', 'kwb'), ('z16', 'qkf'), ('z24', 'tgr'), ('jqn', 'cph')]
+    # Ripple adder circuit
+    # For every bit position n:
+    # (1) = xn ^ yn
+    # (2) = xn & yn
+    # carry{n} = (2) | ((1) ^ carry{n-1})
+    # z{n} = (1) ^ carry{n-1}
+    # Use the inspect function to check which z does not conform to these rules
+    pairs = [('z12', 'kwb'), ('z16', 'qkf'), ('z24', 'tgr'), ('jqn', 'cph')] # Start with empty array, then add any pair you find
     for a, b in pairs:
         swap(a, b)
     deep_evaluate.cache_clear()
@@ -94,17 +101,13 @@ def part2(s):
     z_str = ''
     for z in z_wires:
         simulation = simulations[z]
-        if simulation[1] != 'XOR':
-            print(f'{z} is wrong')
         result = deep_evaluate(simulation)
         z_str += '1' if result else '0'
 
 
-    print(f'0{x_str} -> {int(x_str, 2):46}')
-    print(f'0{y_str} -> {int(y_str, 2):46}')
     true_z_str = bin(int(x_str, 2) + int(y_str, 2))[2:]
-    print(f'{true_z_str} -> {int(x_str, 2) + int(y_str, 2)}')
-    print(z_str)
+    # print(f'{true_z_str} -> {int(x_str, 2) + int(y_str, 2)}')
+    # print(z_str)
 
     for i in range(len(true_z_str)):
         print(inspect(f"z{i:02}"))
@@ -118,15 +121,5 @@ def part2(s):
 
 
 INPUT = lib.aoc.get_current_input()
-# INPUT = '''x00: 1
-# x01: 1
-# x02: 1
-# y00: 0
-# y01: 1
-# y02: 0
-#
-# x00 AND y00 -> z00
-# x01 XOR y01 -> z01
-# x02 OR y02 -> z02'''
 part1(INPUT)
 part2(INPUT)
