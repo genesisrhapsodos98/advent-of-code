@@ -1,17 +1,12 @@
-import collections
 import functools
-import itertools
-import math
-import re
-from itertools import combinations
 
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
 
 wires = dict()
 simulations = dict()
+
 
 def parse_input(s):
     groups = s.split('\n\n')
@@ -23,6 +18,7 @@ def parse_input(s):
         a, op, b = src.split()
         simulations[dst] = (a, op, b)
 
+
 def evaluate(a, op, b):
     match op:
         case 'AND':
@@ -31,6 +27,7 @@ def evaluate(a, op, b):
             return a | b
         case _:
             return a ^ b
+
 
 @functools.cache
 def deep_evaluate(simulation):
@@ -42,9 +39,8 @@ def deep_evaluate(simulation):
     if new_a not in wires:
         new_a = deep_evaluate(simulations[a])
     if new_b not in wires:
-        new_b= deep_evaluate(simulations[b])
+        new_b = deep_evaluate(simulations[b])
     return evaluate(new_a, op, new_b)
-
 
 
 def part1(s):
@@ -59,11 +55,12 @@ def part1(s):
     answer = int(binary_str, 2)
     lib.aoc.give_answer_current(1, answer)
 
+
 @functools.cache
-def inspect(simulation, depth = 0):
+def inspect(simulation, depth=0):
     if simulation in wires or depth >= 5:
         return simulation
-    a, op ,b = simulations[simulation]
+    a, op, b = simulations[simulation]
     simulation_1 = inspect(a, depth + 1)
     simulation_2 = inspect(b, depth + 1)
 
@@ -74,10 +71,12 @@ def inspect(simulation, depth = 0):
     if op == 'XOR':
         return f'{simulation}{{({simulation_1}) ^ ({simulation_2})}}'
 
+
 def swap(a, b):
     tmp = simulations[a]
     simulations[a] = simulations[b]
     simulations[b] = tmp
+
 
 def part2(s):
     # Ripple adder circuit
@@ -87,7 +86,8 @@ def part2(s):
     # carry{n} = (2) | ((1) ^ carry{n-1})
     # z{n} = (1) ^ carry{n-1}
     # Use the inspect function to check which z does not conform to these rules
-    pairs = [('z12', 'kwb'), ('z16', 'qkf'), ('z24', 'tgr'), ('jqn', 'cph')] # Start with empty array, then add any pair you find
+    pairs = [('z12', 'kwb'), ('z16', 'qkf'), ('z24', 'tgr'),
+             ('jqn', 'cph')]  # Start with empty array, then add any pair you find
     for a, b in pairs:
         swap(a, b)
     deep_evaluate.cache_clear()
@@ -103,7 +103,6 @@ def part2(s):
         simulation = simulations[z]
         result = deep_evaluate(simulation)
         z_str += '1' if result else '0'
-
 
     true_z_str = bin(int(x_str, 2) + int(y_str, 2))[2:]
     # print(f'{true_z_str} -> {int(x_str, 2) + int(y_str, 2)}')

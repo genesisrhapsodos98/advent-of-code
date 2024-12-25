@@ -1,14 +1,11 @@
-import collections
-import functools
-import itertools
 import math
-import re
+
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
 
 visited = dict()
+
 
 def cheapest_arrow_pad(cur_row, cur_col, dest_row, dest_col, n_robots):
     answer = math.inf
@@ -33,7 +30,7 @@ def cheapest_arrow_pad(cur_row, cur_col, dest_row, dest_col, n_robots):
             if row < dest_row:
                 queue.append((row + 1, col, presses + 'v'))
             elif row > dest_row:
-                queue.append((row -1, col, presses + '^'))
+                queue.append((row - 1, col, presses + '^'))
             if col < dest_col:
                 queue.append((row, col + 1, presses + '>'))
             elif col > dest_col:
@@ -41,6 +38,7 @@ def cheapest_arrow_pad(cur_row, cur_col, dest_row, dest_col, n_robots):
 
     visited[state] = answer
     return answer
+
 
 def cheapest_robot(presses, n_robots):
     if n_robots == 1:
@@ -61,6 +59,7 @@ def cheapest_robot(presses, n_robots):
                     cur_col = next_col
 
     return result
+
 
 def cheapest(cur_row, cur_col, dest_row, dest_col, n_robots):
     answer = math.inf
@@ -86,8 +85,8 @@ def cheapest(cur_row, cur_col, dest_row, dest_col, n_robots):
             elif col > dest_col:
                 queue.append((row, col - 1, presses + '<'))
 
-
     return answer
+
 
 def solve(codes, n_robots):
     total = 0
@@ -111,10 +110,10 @@ def solve(codes, n_robots):
     return total
 
 
-
 def parse_input(s):
     codes = s.splitlines()
     return codes
+
 
 def part1(s):
     codes = parse_input(s)
@@ -126,6 +125,7 @@ def part2(s):
     codes = parse_input(s)
     answer = solve(codes, 26)
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)

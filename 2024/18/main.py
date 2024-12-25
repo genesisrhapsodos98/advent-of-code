@@ -1,11 +1,7 @@
-import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
+
 
 def parse_input(s, lim=0, size=70):
     lines = s.splitlines()
@@ -19,6 +15,7 @@ def parse_input(s, lim=0, size=70):
         d[(x, y)] = '#'
     grid = lib.grid.FixedGrid.from_dict(d, missing='.')
     return grid
+
 
 def shortest_length(grid: lib.grid.FixedGrid):
     start = (0, 0)
@@ -38,10 +35,12 @@ def shortest_length(grid: lib.grid.FixedGrid):
 
     return answer
 
+
 def part1(s):
     grid = parse_input(s, 1024)
     answer = shortest_length(grid)
     lib.aoc.give_answer_current(1, answer)
+
 
 def part2(s):
     lines = s.splitlines()
@@ -52,7 +51,7 @@ def part2(s):
     while not found:
         mid = (high + low) // 2
         grid_1 = parse_input(s, mid)
-        grid_2 = parse_input(s, mid+1)
+        grid_2 = parse_input(s, mid + 1)
         escape_path_1 = shortest_length(grid_1)
         escape_path_2 = shortest_length(grid_2)
         if escape_path_1 > 0 and escape_path_2 < 0:
@@ -66,6 +65,7 @@ def part2(s):
     answer = lines[mid]
 
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)

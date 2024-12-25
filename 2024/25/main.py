@@ -1,14 +1,9 @@
-import collections
-import functools
-import itertools
-import math
-import re
 from itertools import product
 
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
+
 
 def parse_input(s):
     groups = s.split('\n\n')
@@ -17,6 +12,7 @@ def parse_input(s):
         grid = lib.grid.FixedGrid.parse(group)
         grids.append(grid)
     return grids
+
 
 def fit(lock, key):
     result = True
@@ -28,6 +24,7 @@ def fit(lock, key):
             break
     return result
 
+
 def part1(s):
     grids = parse_input(s)
     locks = [grid for grid in grids if '#' in grid.row(0)]
@@ -38,8 +35,10 @@ def part1(s):
             answer += 1
     lib.aoc.give_answer_current(1, answer)
 
+
 def part2(s):
     print('There is no part two for Christmas!')
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)

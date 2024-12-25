@@ -1,25 +1,26 @@
 import collections
 import functools
-import itertools
-import math
-import re
+
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
+
 
 def parse_input(s):
     lines = s.splitlines()
     numbers = list(map(int, lines))
     return numbers
 
+
 @functools.cache
 def mix(num, val):
     return val ^ num
 
+
 @functools.cache
 def prune(num):
     return num % 16777216
+
 
 @functools.cache
 def randomize(seed):
@@ -27,6 +28,7 @@ def randomize(seed):
     result = prune(mix(result, result // 32))
     result = prune(mix(result, result * 2048))
     return result
+
 
 def part1(s):
     numbers = parse_input(s)
@@ -39,6 +41,7 @@ def part1(s):
         answer += final
     lib.aoc.give_answer_current(1, answer)
 
+
 def get_prices(num):
     prices = [num % 10]
     current_value = num
@@ -46,6 +49,7 @@ def get_prices(num):
         current_value = randomize(current_value)
         prices.append(current_value % 10)
     return prices
+
 
 def part2(s):
     numbers = parse_input(s)
@@ -70,6 +74,7 @@ def part2(s):
     print(answer)
 
     lib.aoc.give_answer_current(2, answer)
+
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
