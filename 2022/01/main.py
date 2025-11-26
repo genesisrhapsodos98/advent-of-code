@@ -1,5 +1,6 @@
 import collections
 import functools
+import heapq
 import itertools
 import math
 import re
@@ -20,10 +21,11 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    elves = parse_input(s)
+    calories = [sum(elf) for elf in elves]
+    top3 = heapq.nlargest(3, calories)
+    answer = sum(top3)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
