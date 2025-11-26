@@ -1,13 +1,7 @@
-import collections
-import functools
 import heapq
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
 
 def parse_input(s):
     groups = s.split('\n\n')
