@@ -1,12 +1,7 @@
 import collections
-import functools
-import itertools
-import math
-import re
 import lib.aoc
 import lib.graph
 import lib.grid
-from lib.graphics import *
 
 class Grove:
     def __init__(self, s):
