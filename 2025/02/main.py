@@ -26,6 +26,15 @@ def repeated_twice_pattern(s):
 
     return None
 
+def smallest_repeated_pattern(s):
+    n = len(s)
+    for i in range(1, n // 2 + 1):
+        if n % i == 0:
+            unit = s[:i]
+            if unit * (n // i) == s:
+                return unit
+    return None
+
 def part1(s):
     ranges = parse_input(s)
     answer = 0
@@ -37,10 +46,14 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
+    ranges = parse_input(s)
     answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    for (start, end) in ranges:
+        for n in range(start, end + 1):
+            p = smallest_repeated_pattern(str(n))
+            if p is not None:
+                answer += n
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
