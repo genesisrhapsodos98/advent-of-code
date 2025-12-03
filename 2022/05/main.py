@@ -42,10 +42,15 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    stacks, moves = parse_input(s)
+
+    def move_blocks(stacks, n, source, target):
+        moved = stacks[source][-n:]
+        stacks[source] = stacks[source][:-n]
+        stacks[target] += moved
+
+    answer = solve(stacks, moves, move_blocks)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
