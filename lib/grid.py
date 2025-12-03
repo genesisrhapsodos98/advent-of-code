@@ -152,6 +152,79 @@ class FixedGrid:
                      include_orthogonals=True,
                      include_diagonals=False,
                      allow_reverse=False):
+        """
+        Find occurrences of a sequence of items in the grid.
+
+        This method scans the grid for occurrences of a given `pattern`
+        (a sequence of values) in one or more directions. It supports
+        orthogonal movement (horizontal/vertical), diagonal movement, and
+        optionally reverse directions.
+
+        Parameters
+        ----------
+        pattern : sequence
+            The ordered sequence of items to search for. The first element
+            must match the starting cell for a match to be considered.
+
+        include_orthogonals : bool, optional (default: True)
+            If True, search horizontally and vertically:
+            - (1, 0)  → right
+            - (0, 1)  → down
+            If `allow_reverse` is True, also search:
+            - (-1, 0) → left
+            - (0, -1) → up
+
+        include_diagonals : bool, optional (default: False)
+            If True, search diagonally:
+            - (1, 1)  → down-right
+            - (1, -1) → up-right
+            If `allow_reverse` is True, also search:
+            - (-1, 1) → down-left
+            - (-1, -1) → up-left
+
+        allow_reverse : bool, optional (default: False)
+            If True, include the reverse directions for any allowed movement
+            type. If False, only “forward” directions are used.
+
+        Yields
+        ------
+        tuple
+            Yields pairs of the form:
+                ((x, y), (dx, dy))
+            where:
+            - `(x, y)` is the starting coordinate of the match
+            - `(dx, dy)` is the direction vector of the match
+
+            The full matched pattern occupies:
+                (x + i*dx, y + i*dy) for i = 0 .. len(pattern)-1
+
+        Raises
+        ------
+        AssertionError
+            If no directions were enabled (i.e., all direction flags false).
+
+        Notes
+        -----
+        - Pattern matching stops early if the last cell of the required
+          segment would fall outside the grid.
+
+        Examples
+        --------
+        Search for "CAT" horizontally or vertically:
+
+            >>> for start, direction in grid.find_matches("CAT"):
+            ...     print(start, direction)
+            (2, 0) (1, 0)
+
+        Enable diagonals:
+
+            >>> matches = list(grid.find_matches("CAT", include_diagonals=True))
+
+        Allow reverse directions:
+
+            >>> matches = list(grid.find_matches("CAT", allow_reverse=True))
+
+        """
         directions = []
         if include_orthogonals:
             directions.extend([(1, 0), (0, 1)])
