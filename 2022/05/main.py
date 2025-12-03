@@ -1,15 +1,5 @@
-import collections
-import functools
-import itertools
-import math
-import re
-
 import parse
-
 import lib.aoc
-import lib.graph
-import lib.grid
-from lib.graphics import *
 
 def parse_input(s):
     stacks, moves = s.split('\n\n')
