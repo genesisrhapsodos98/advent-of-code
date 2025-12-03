@@ -28,28 +28,42 @@ def parse_input(s):
     banks = s.splitlines()
     return banks
 
-def max_two_digit(s: str) -> int:
-    digits = [int(c) for c in s]
-    best = -1
-    for i in range(len(digits)):
-        for j in range(i + 1, len(digits)):
-            best = max(best, digits[i] * 10 + digits[j])
-    return best
+def max_k_digits(s: str, k: int) -> str:
+    n = len(s)
+    if k > n:
+        raise ValueError("Not enough digits to pick k digits")
+
+    result = []
+    start = 0
+
+    for remaining in range(k, 0, -1):
+        # Last possible index for current digit
+        end = n - remaining
+        # Pick the maximum digit in s[start:end+1]
+        best_digit = max(s[start:end+1])
+        best_index = s.find(best_digit, start, end+1)
+        result.append(best_digit)
+        start = best_index + 1
+
+    return int("".join(result))
 
 def part1(s):
     banks = parse_input(s)
 
     answer = 0
     for bank in banks:
-        answer += max_two_digit(bank)
+        answer += max_k_digits(bank, 2)
 
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
+    banks = parse_input(s)
+
     answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    for bank in banks:
+        x = max_k_digits(bank, 12)
+        answer += x
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
