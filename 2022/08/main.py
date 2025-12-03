@@ -25,18 +25,37 @@ import lib.ocr
 import lib.parsing
 
 def parse_input(s):
-    # nums = list(map(lambda r:r[0], parse.findall('{:d}', s)))
-    # lines = s.splitlines()
-    # groups = s.split('\n\n')
-    # grid = lib.grid.FixedGrid.parse(s, value_fn=int)
-    # grid = lib.grid.FixedGrid.parse(s,
-    #                                linesplit_fn=lambda line: line.split(),
-    #                                value_fn=int)
-    return None
+    grid = lib.grid.FixedGrid.parse(s, value_fn=int)
+    return grid
+
+def get_tree_stats(grid: lib.grid.FixedGrid):
+    for (x, y), self_height in grid.items():
+        obscured = True
+        distances = []
+
+        for dx, dy in [(-1, 0),
+                       (1, 0),
+                       (0, -1),
+                       (0, 1)]:
+            nx, ny = x, y
+            num_trees_visible = 0
+            while True:
+                nx, ny = nx + dx, ny + dy
+                if (nx, ny) not in grid:
+                    obscured = False
+                    break
+                num_trees_visible += 1
+                if grid[nx, ny] >= self_height:
+                    break  # Obscured
+            distances.append(num_trees_visible)
+
+        yield distances, obscured
+
 
 def part1(s):
-    _ = parse_input(s)
-    answer = 0
+    grid = parse_input(s)
+    tree_stats = get_tree_stats(grid)
+    answer = sum(1 for _, obscured in tree_stats if not obscured)
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
