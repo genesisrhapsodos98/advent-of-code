@@ -65,10 +65,11 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    lines = parse_input(s)
+    folders = get_folder_sizes(lines)
+    TO_FREE = 30_000_000 - (70_000_000 - folders['/'])
+    answer = min(size for size in folders.values() if size >= TO_FREE)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
