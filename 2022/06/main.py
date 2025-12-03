@@ -27,21 +27,21 @@ import lib.parsing
 def parse_input(s):
     return s
 
+def find_marker(datastream, length):
+    for i in range(len(datastream) - length):
+        potential_marker = datastream[i:i+length]
+        if len(set(potential_marker)) == length:
+            return i + length
+
 def part1(s):
     datastream = parse_input(s)
-    answer = 0
-    for i in range(len(datastream) - 4):
-        potential_marker = datastream[i:i+4]
-        if len(set(potential_marker)) == 4:
-            answer = i + 4
-            break
+    answer = find_marker(datastream, 4)
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    datastream = parse_input(s)
+    answer = find_marker(datastream, 14)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
