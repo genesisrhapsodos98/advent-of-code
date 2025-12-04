@@ -33,5 +33,5 @@ distance2 = int(''.join([str(distance) for distance in distances]))
 
 s2 = solve(time2, distance2)
 
-lib.aoc.give_answer_current(1, s)
+# lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
