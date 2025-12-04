@@ -51,5 +51,5 @@ for row in rows:
     s += solve_row(row)
     s2 += solve_row(row, 5)
 
-lib.aoc.give_answer_current(1, s)
+# lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
