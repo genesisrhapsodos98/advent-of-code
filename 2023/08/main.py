@@ -41,5 +41,5 @@ for key in start_keys:
     rs.append(r)
 s2 = math.lcm(*rs)
 
-# lib.aoc.give_answer_current(1, s)
+lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
