@@ -80,5 +80,5 @@ while cycle < CYCLES:
 
 s2 += score_grid(grid2)
 
-lib.aoc.give_answer_current(1, s)
+# lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
