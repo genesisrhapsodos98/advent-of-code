@@ -4,121 +4,230 @@ import lib.aoc
 import lib.graph
 import lib.grid
 
-wires = dict()
-simulations = dict()
-
-
 def parse_input(s):
-    groups = s.split('\n\n')
-    for line in groups[0].splitlines():
-        a, b = line.split(':')
-        wires[a] = b.strip() == '1'
-    for line in groups[1].splitlines():
-        src, dst = line.split(' -> ')
-        a, op, b = src.split()
-        simulations[dst] = (a, op, b)
+    a, b = s.split('\n\n')
 
+    signals = {}
+    for line in a.splitlines():
+        a0, a1 = line.split(': ')
+        signals[a0] = int(a1)
 
-def evaluate(a, op, b):
-    match op:
-        case 'AND':
-            return a & b
-        case 'OR':
-            return a | b
-        case _:
-            return a ^ b
+    gates = {}
 
+    for line in b.splitlines():
+        left, right = line.split(' -> ')
+        parts = left.split()
+        gates[right] = parts
 
-@functools.cache
-def deep_evaluate(simulation):
-    a, op, b = simulation
-    if a in wires and b in wires:
-        return evaluate(wires[a], op, wires[b])
-    new_a = a
-    new_b = b
-    if new_a not in wires:
-        new_a = deep_evaluate(simulations[a])
-    if new_b not in wires:
-        new_b = deep_evaluate(simulations[b])
-    return evaluate(new_a, op, new_b)
+    return signals, gates
 
+def extract_num(prefix, d):
+    bits = {}
+
+    for wire, val in d.items():
+        if wire.startswith(prefix):
+            pos = int(wire[len(prefix):])
+            bits[pos] = val
+
+    out_bits = [b for _,b in sorted(bits.items(), reverse=True)]
+    out_bits = ''.join(map(str, out_bits))
+
+    return int(out_bits, base=2)
+
+def run_wires(signals, gates):
+    @functools.cache
+    def e(wire):
+        if wire in signals:
+            return signals[wire]
+
+        left, op, right = gates[wire]
+        left = e(left)
+        right = e(right)
+        if op == 'AND':
+            return left & right
+        if op == 'OR':
+            return left | right
+        assert(op == 'XOR')
+        return left ^ right
+
+    try:
+        bits = {}
+
+        for wire in gates:
+            if wire.startswith('z'):
+                bits[wire] = e(wire)
+
+        return extract_num('z', bits)
+    except:
+        return None
 
 def part1(s):
-    parse_input(s)
-    targets = sorted([s for s in simulations if s.startswith('z')])[::-1]
-    binary_str = ''
-    for t in targets:
-        simulation = simulations[t]
-        result = deep_evaluate(simulation)
-        binary_str += '1' if result else '0'
+    signals, gates = parse_input(s)
 
-    answer = int(binary_str, 2)
-    lib.aoc.give_answer_current(1, answer)
+    answer = run_wires(signals, gates)
 
+    lib.aoc.give_answer(2024, 24, 1, answer)
 
-@functools.cache
-def inspect(simulation, depth=0):
-    if simulation in wires or depth >= 5:
-        return simulation
-    a, op, b = simulations[simulation]
-    simulation_1 = inspect(a, depth + 1)
-    simulation_2 = inspect(b, depth + 1)
+def validate_fixed_gates(signals, gates):
+    x = extract_num('x', signals)
+    y = extract_num('y', signals)
 
-    if op == 'AND':
-        return f'{simulation}{{({simulation_1}) & ({simulation_2})}}'
-    if op == 'OR':
-        return f'{simulation}{{({simulation_1}) | ({simulation_2})}}'
-    if op == 'XOR':
-        return f'{simulation}{{({simulation_1}) ^ ({simulation_2})}}'
+    target = x+y
 
+    assert(run_wires(signals, gates) == target)
+    print('Success! The swaps fixed the system, numbers added properly!')
 
-def swap(a, b):
-    tmp = simulations[a]
-    simulations[a] = simulations[b]
-    simulations[b] = tmp
+def part2_manual(s):
+    signals, gates = parse_input(s)
 
+    def plot_graph():
+        # Rename wires to include the gate type. This keeps the generated
+        # graph smaller and easier to parse visually.
+        renaming = {}
+        for wire, (_, op, _) in gates.items():
+            renaming[wire] = wire + ': ' + op
+
+        graph = collections.defaultdict(list)
+
+        c = collections.Counter()
+
+        coloring = {}
+
+        for wire, (left, op, right) in gates.items():
+            left = renaming.get(left, left)
+            right = renaming.get(right, right)
+            wire = renaming.get(wire, wire)
+
+            graph[left].append(wire)
+            graph[right].append(wire)
+
+            color = {'XOR': 'blue',
+                     'AND': 'red',
+                     'OR': 'green'}[op]
+            coloring[wire] = color
+
+        lib.graph.plot_graph(graph, distance=False, coloring=coloring,
+                             fix_nodes_after_dragging=True)
+
+    swaps = []
+
+    for _ in range(4):
+        plot_graph()
+
+        print('Please analyze and find a pair of wires to swap.')
+        first = input('First wire in the swap: ')
+        second = input('Second wire in the swap: ')
+        gates[first], gates[second] = gates[second], gates[first]
+        swaps.append(first)
+        swaps.append(second)
+
+    validate_fixed_gates(signals, gates)
+
+    print('Plotting fully fixed graph:')
+    plot_graph()
+
+    answer = ','.join(sorted(swaps))
+
+    lib.aoc.give_answer(2024, 24, 2, answer)
 
 def part2(s):
-    # Ripple adder circuit
-    # For every bit position n:
-    # (1) = xn ^ yn
-    # (2) = xn & yn
-    # carry{n} = (2) | ((1) ^ carry{n-1})
-    # z{n} = (1) ^ carry{n-1}
-    # Use the inspect function to check which z does not conform to these rules
-    pairs = [('z12', 'kwb'), ('z16', 'qkf'), ('z24', 'tgr'),
-             ('jqn', 'cph')]  # Start with empty array, then add any pair you find
-    for a, b in pairs:
-        swap(a, b)
-    deep_evaluate.cache_clear()
+    signals, gates = parse_input(s)
 
-    x_wires = sorted([w for w in wires if w.startswith('x')])[::-1]
-    y_wires = sorted([w for w in wires if w.startswith('y')])[::-1]
-    z_wires = sorted([s for s in simulations if s.startswith('z')])[::-1]
+    num_bits = max(int(s[1:]) for s in signals)+1
 
-    x_str = ''.join(['1' if wires[x] else '0' for x in x_wires])
-    y_str = ''.join(['1' if wires[y] else '0' for y in y_wires])
-    z_str = ''
-    for z in z_wires:
-        simulation = simulations[z]
-        result = deep_evaluate(simulation)
-        z_str += '1' if result else '0'
+    def find_error():
+        # Restart from scratch each time since swapping occurs
+        op_to_wire = {}
 
-    true_z_str = bin(int(x_str, 2) + int(y_str, 2))[2:]
-    # print(f'{true_z_str} -> {int(x_str, 2) + int(y_str, 2)}')
-    # print(z_str)
+        xy_xors = {}
+        xy_ands = {}
+        for wire, (left, op, right) in gates.items():
+            op_to_wire[left, op, right] = wire
+            if ((left[0] == 'x' and right[0] == 'y') or
+                (left[0] == 'y' and right[0] == 'x')):
+                assert(left[1:] == right[1:])
+                zid = int(left[1:])
+                if op == 'XOR':
+                    assert(zid not in xy_xors)
+                    xy_xors[zid] = wire
+                elif op == 'AND':
+                    assert(zid not in xy_ands)
+                    xy_ands[zid] = wire
+                else:
+                    assert(False)
 
-    for i in range(len(true_z_str)):
-        print(inspect(f"z{i:02}"))
+        assert(len(xy_xors) == num_bits)
+        assert(len(xy_ands) == num_bits)
 
-    result = set()
-    for a, b in pairs:
-        result.add(a)
-        result.add(b)
-    answer = ','.join(sorted(result))
-    lib.aoc.give_answer_current(2, answer)
+        z_carry = {}
 
+        for i in range(num_bits+1):
+            xid = 'x' + str(i).zfill(2)
+            yid = 'y' + str(i).zfill(2)
+            zid = 'z' + str(i).zfill(2)
+            if i == 0:
+                if xy_xors[0] != zid:
+                    op_target = (xid, 'XOR', yid)
+                    if op_target not in op_to_wire:
+                        # It must be reversed!
+                        op_target = op_target[::-1]
+                    # Fix the first output wire!
+                    return zid, op_to_wire[op_target]
+                z_carry[0] = xy_ands[0]
+            else:
+                zout_target = (z_carry[i-1], 'XOR', xy_xors[i])
+                if zout_target not in op_to_wire:
+                    zout_target = zout_target[::-1]
+                if zout_target not in op_to_wire:
+                    # We need to swap z_carry[i-1] into the right position!
+                    current_left, current_op, current_right = gates[zid]
+                    assert(current_op == 'XOR')
+                    if current_left == xy_xors[i]:
+                        # Left is good, swap the right
+                        return current_right, z_carry[i-1]
+                    elif current_right == xy_xors[i]:
+                        # Right is good, swap the left
+                        return current_left, z_carry[i-1]
+                    elif current_left == z_carry[i-1]:
+                        # Left is good, swap the right
+                        return current_right, xy_xors[i]
+                    elif current_right == z_carry[i-1]:
+                        # Right is good, swap the left
+                        return current_left, xy_xors[i]
+                    print('Cannot fix this automatically (yet)')
+                    assert(False)
+                zout = op_to_wire[zout_target]
+                if zout != zid:
+                    # The output wire is misplaced! Fix it
+                    return zid, zout
 
-INPUT = lib.aoc.get_current_input()
+                carry_and_target = (z_carry[i-1], 'AND', xy_xors[i])
+                if carry_and_target not in op_to_wire:
+                    carry_and_target = carry_and_target[::-1]
+                carry_and = op_to_wire[carry_and_target]
+
+                carry_target = (carry_and, 'OR', xy_ands[i])
+                if carry_target not in op_to_wire:
+                    carry_target = carry_target[::-1]
+                carry = op_to_wire[carry_target]
+
+                z_carry[i] = carry
+
+        return None
+
+    swaps = []
+    for i in range(4):
+        first, second = find_error()
+        print(f'Swapping {first} with {second}...')
+        gates[first], gates[second] = gates[second], gates[first]
+        swaps += [first, second]
+
+    validate_fixed_gates(signals, gates)
+
+    answer = ','.join(sorted(swaps))
+
+    lib.aoc.give_answer(2024, 24, 2, answer)
+
+INPUT = lib.aoc.get_input(2024, 24)
 part1(INPUT)
 part2(INPUT)
