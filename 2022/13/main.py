@@ -25,19 +25,31 @@ import lib.ocr
 import lib.parsing
 
 def parse_input(s):
-    # nums = list(map(lambda r:r[0], parse.findall('{:d}', s)))
-    # lines = s.splitlines()
-    # groups = s.split('\n\n')
-    # grid = lib.grid.FixedGrid.parse(s, value_fn=int)
-    # grid = lib.grid.FixedGrid.parse(s,
-    #                                linesplit_fn=lambda line: line.split(),
-    #                                value_fn=int)
-    return None
+    groups = s.split('\n\n')
+    pairs = []
+    for g in groups:
+        left, right = g.splitlines()
+        pairs.append((json.loads(left), json.loads(right)))
+    return pairs
+
+def compare(left, right):
+    if isinstance(left, int) and isinstance(right, int):
+        return (left > right) - (left < right)
+    if isinstance(left, int):
+        left = [left]
+    if isinstance(right, int):
+        right = [right]
+    for l_item, r_item in zip(left, right):
+        result = compare(l_item, r_item)
+        if result != 0:
+            return result
+    return (len(left) > len(right)) - (len(left) < len(right))
 
 def part1(s):
-    _ = parse_input(s)
-    answer = 0
+    pairs = parse_input(s)
+    answer = sum(i+1 for i, (l, r) in enumerate(pairs) if compare(l, r) < 0)
     lib.aoc.give_answer_current(1, answer)
+
 
 def part2(s):
     pass
