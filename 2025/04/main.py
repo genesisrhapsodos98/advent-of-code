@@ -37,9 +37,22 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
+    grid = parse_input(s)
+    total_removed = 0
+    while True:
+        to_remove = [
+            (x, y)
+            for (x, y), v in grid.items()
+            if v == '@' and sum(grid[nx, ny] == '@' for nx, ny in grid.neighbors(x, y, diagonals=True)) < 4
+        ]
+        if not to_remove:
+            break
+        for x, y in to_remove:
+            grid[x, y] = '.'
+        total_removed += len(to_remove)
+    answer = total_removed
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
+part2(INPUT)
