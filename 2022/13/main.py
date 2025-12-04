@@ -25,12 +25,9 @@ import lib.ocr
 import lib.parsing
 
 def parse_input(s):
-    groups = s.split('\n\n')
-    pairs = []
-    for g in groups:
-        left, right = g.splitlines()
-        pairs.append((json.loads(left), json.loads(right)))
-    return pairs
+    lines = [line for line in s.splitlines() if line.strip()]
+    packets = [json.loads(line) for line in lines]
+    return packets
 
 def compare(left, right):
     if isinstance(left, int) and isinstance(right, int):
@@ -46,16 +43,21 @@ def compare(left, right):
     return (len(left) > len(right)) - (len(left) < len(right))
 
 def part1(s):
-    pairs = parse_input(s)
+    groups = s.split('\n\n')
+    pairs = [(json.loads(l), json.loads(r)) for g in groups for l, r in [g.splitlines()]]
     answer = sum(i+1 for i, (l, r) in enumerate(pairs) if compare(l, r) < 0)
     lib.aoc.give_answer_current(1, answer)
 
-
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    packets = parse_input(s)
+    divider_2 = [[2]]
+    divider_6 = [[6]]
+    packets.extend([divider_2, divider_6])
+    packets.sort(key=functools.cmp_to_key(compare))
+    idx1 = packets.index(divider_2) + 1
+    idx2 = packets.index(divider_6) + 1
+    answer = idx1 * idx2
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
