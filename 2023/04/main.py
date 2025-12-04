@@ -41,5 +41,5 @@ for idx, card in enumerate(cards):
 
 s2 = sum(c for c in copies.values())
 
-lib.aoc.give_answer_current(1, s)
+# lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
