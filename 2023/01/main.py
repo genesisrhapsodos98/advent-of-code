@@ -44,5 +44,5 @@ for line in lines:
 
     s2 += left_result * 10 + right_result
 
-# lib.aoc.give_answer_current(1, s)
+lib.aoc.give_answer_current(1, s)
 lib.aoc.give_answer_current(2, s2)
