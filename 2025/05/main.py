@@ -1,13 +1,3 @@
-import collections
-import functools
-import itertools
-import json
-import math
-import parse
-import re2 as re
-import sympy # sympy.parse_expr, sympy.solve, sympy.Eq
-import sys # sys.setrecursionlimit(1000000)
-import z3 # x = z3.Int('x'); x < 0; (x-1) >= 0
 # z3.If(x >= 0, x, -x); z3.And(); z3.Or(); z3.Not()
 # s = z3.Solver(); solver.add(constraint); s.check(); s.model()[x].as_long()
 # o = z3.Optimize(); o.minimize(x); o.check(); o.model()[x].as_long()
@@ -16,7 +6,6 @@ import lib.algorithms
 import lib.aoc
 import lib.cyk
 import lib.graph
-from lib.graphics import *
 import lib.grid
 import lib.hex_coord
 import lib.lazy_dict
@@ -25,23 +14,19 @@ import lib.ocr
 import lib.parsing
 
 def parse_input(s):
-    # Split input into ranges and ingredient IDs
     sections = s.strip().split('\n\n')
 
-    # Parse fresh ranges
     fresh_ranges = []
     for line in sections[0].splitlines():
         start, end = map(int, line.split('-'))
         fresh_ranges.append((start, end))
 
-    # Parse available ingredient IDs
     available_ids = [int(x) for x in sections[1].splitlines()]
 
     return fresh_ranges, available_ids
 
 
 def merge_ranges(ranges):
-    # Sort ranges by start
     ranges = sorted(ranges, key=lambda x: x[0])
     merged = []
 
