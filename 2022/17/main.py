@@ -28,103 +28,113 @@ def parse_input(s):
     return s.strip()
 
 ROCKS = [
-    {(0,0), (1,0), (2,0), (3,0)},
-    {(1,0), (0,1), (1,1), (2,1), (1,2)},
-    {(0,0), (1,0), (2,0), (2,1), (2,2)},
-    {(0,0), (0,1), (0,2), (0,3)},
-    {(0,0), (1,0), (0,1), (1,1)},
+    [(2, 0), (3, 0), (4, 0), (5, 0)], # Horizontal Line
+    [(3, 0), (2, 1), (3, 1), (4, 1), (3, 2)], # Plus
+    [(2, 0), (3, 0), (4, 0), (4, 1), (4, 2)], # L
+    [(2, 0), (2, 1), (2, 2), (2, 3)], # Vertical Bar
+    [(2, 0), (2, 1), (3, 0), (3, 1)], # Square
 ]
 
-def can_move(rock, dx, dy, occupied):
-    for x, y in rock:
-        nx, ny = x + dx, y + dy
-        if nx < 0 or nx >= 7 or ny <= 0:
-            return False
-        if (nx, ny) in occupied:
-            return False
-    return True
+def solve(s, CYCLE_COUNT):
+    TOWER_WIDTH = 7
+
+    tower = {(x, 0) for x in range(TOWER_WIDTH)}
+    tower_height = 0
+    column_heights = [0] * TOWER_WIDTH
+
+    cycle_idx = 0
+    jet_idx = 0
+
+    history = collections.defaultdict(list)
+
+    while cycle_idx < CYCLE_COUNT:
+        current_cycle = cycle_idx
+        cycle_idx += 1
+
+        rock_idx = current_cycle % len(ROCKS)
+        rock = ROCKS[rock_idx]
+        y_off = tower_height + 4
+        rock = [(x, y+y_off) for x, y in rock]
+
+        cycle_key = (rock_idx, jet_idx)
+
+        move_x, move_y = 0, 0
+
+        # Make it rain!
+        while True:
+            jet = -1 if s[jet_idx] == '<' else 1
+            jet_idx = (jet_idx + 1) % len(s)
+
+            test_rock = [(x+jet, y) for x, y in rock]
+            if any(x < 0 or x >= TOWER_WIDTH for x, y in test_rock):
+                test_rock = rock
+            elif any(c in tower for c in test_rock):
+                test_rock = rock
+            else:
+                move_x += jet
+
+            rock = test_rock
+            test_rock = [(x, y-1) for x,y in rock]
+            if any(c in tower for c in test_rock):
+                # It settled
+                tower.update(rock)
+                tower_height = max(tower_height, max(y for x,y in rock))
+                for x, y in rock:
+                    column_heights[x] = max(column_heights[x], y)
+
+                if history is None:
+                    # We must be wrapping up at this point
+                    break
+
+                top_characteristic = tuple(y-tower_height
+                                           for y in column_heights)
+
+                key = (cycle_key, move_x, move_y, top_characteristic)
+
+                cycle_history = history[key]
+
+                if len(cycle_history) > 1:
+                    last_y_diff = cycle_history[-1][0] - cycle_history[-2][0]
+                    curr_y_diff = tower_height - cycle_history[-1][0]
+
+                    if last_y_diff == curr_y_diff:
+                        cycle_diff = current_cycle - cycle_history[-1][1]
+
+                        remaining_cycles = CYCLE_COUNT - current_cycle - 1
+
+                        supercycles = remaining_cycles // cycle_diff
+                        skipped_cycles = supercycles * cycle_diff
+
+                        height_mod = supercycles * curr_y_diff
+
+                        tower = {(x, y+height_mod) for x, y in tower}
+                        tower_height += height_mod
+
+                        cycle_idx += skipped_cycles
+
+                        # We jumped ahead once, no need to do it again!
+                        history = None
+                        break
+
+                cycle_history.append((tower_height, current_cycle))
+                break
+
+            move_y -= 1
+            rock = test_rock
+
+    return tower_height
 
 def part1(s):
     jets = parse_input(s)
-    L = len(jets)
-    jet_i = 0
-    occupied = set()
-    height = 0
+    answer = solve(jets, 2022)
 
-    for rock_i in range(2022):
-        shape = ROCKS[rock_i % 5]
-        rock = {(x+2, y+height+4) for (x,y) in shape}
+    lib.aoc.give_answer_current(1, answer)
 
-        while True:
-            push = jets[jet_i]
-            jet_i = (jet_i + 1) % L
-
-            if push == '<':
-                if can_move(rock, -1, 0, occupied):
-                    rock = {(x-1, y) for (x,y) in rock}
-            else:
-                if can_move(rock, 1, 0, occupied):
-                    rock = {(x+1, y) for (x,y) in rock}
-
-            if can_move(rock, 0, -1, occupied):
-                rock = {(x, y-1) for (x,y) in rock}
-            else:
-                for pos in rock:
-                    occupied.add(pos)
-                    height = max(height, pos[1])
-                break
-
-    lib.aoc.give_answer_current(1, height)
-
-def part2(jets):
+def part2(s):
     jets = parse_input(s)
-    L = len(jets)
-    jet_i = 0
-    occupied = set()
-    height = 0
-    states = {}
-    top_rows = 50
-    target = 1000000000000
-    rock_i = 0
+    answer = solve(jets, 1_000_000_000_000)
 
-    while rock_i < target:
-        shape = ROCKS[rock_i % 5]
-        rock = {(x+2, y+height+4) for (x,y) in shape}
-
-        while True:
-            push = jets[jet_i]
-            jet_i = (jet_i + 1) % L
-
-            if push == '<':
-                if can_move(rock, -1, 0, occupied):
-                    rock = {(x-1, y) for (x,y) in rock}
-            else:
-                if can_move(rock, 1, 0, occupied):
-                    rock = {(x+1, y) for (x,y) in rock}
-
-            if can_move(rock, 0, -1, occupied):
-                rock = {(x, y-1) for (x,y) in rock}
-            else:
-                for pos in rock:
-                    occupied.add(pos)
-                    height = max(height, pos[1])
-                break
-
-        key = (rock_i % 5, jet_i, frozenset((x, height-y) for (x,y) in occupied if height-y <= top_rows))
-        if key in states:
-            old_rock_i, old_height = states[key]
-            cycle_len = rock_i - old_rock_i
-            cycle_height = height - old_height
-            cycles = (target - rock_i) // cycle_len
-            rock_i += cycles * cycle_len
-            height += cycles * cycle_height
-            occupied = {(x, y + cycles*cycle_height if y > height - cycle_height else y) for (x,y) in occupied}
-        else:
-            states[key] = (rock_i, height)
-
-        rock_i += 1
-
-    lib.aoc.give_answer_current(2, height)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
