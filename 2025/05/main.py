@@ -40,22 +40,38 @@ def parse_input(s):
     return fresh_ranges, available_ids
 
 
+def merge_ranges(ranges):
+    # Sort ranges by start
+    ranges = sorted(ranges, key=lambda x: x[0])
+    merged = []
+
+    for start, end in ranges:
+        if not merged or start > merged[-1][1] + 1:
+            merged.append([start, end])
+        else:
+            merged[-1][1] = max(merged[-1][1], end)
+
+    return merged
+
 def part1(s):
     fresh_ranges, available_ids = parse_input(s)
 
     fresh_count = 0
     for ing_id in available_ids:
-        # Check if ing_id is in any fresh range
         if any(start <= ing_id <= end for start, end in fresh_ranges):
             fresh_count += 1
 
     lib.aoc.give_answer_current(1, fresh_count)
 
+
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    fresh_ranges, _ = parse_input(s)
+
+    merged = merge_ranges(fresh_ranges)
+
+    total_fresh = sum(end - start + 1 for start, end in merged)
+
+    lib.aoc.give_answer_current(2, total_fresh)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
