@@ -66,10 +66,41 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    sensors = parse_input(s)
+    MIN_COORD = 0
+    MAX_COORD = 4_000_000
+    def tuning_frequency(x, y):
+        return x * 4_000_000 + y
+    for y in range(MIN_COORD, MAX_COORD + 1):
+        ranges = []
+        for s in sensors:
+            half_width = s.scan_dist - abs(s.position[1] - y)
+            if half_width < 0:
+                continue
+
+            ranges.append((s.position[0] - half_width,
+                           s.position[0] + half_width))
+
+        ranges.sort()
+
+        compact = []
+        low_x, high_x = ranges[0]
+        for n_low_x, n_high_x in ranges[1:]:
+            if n_low_x - 1 <= high_x:
+                high_x = max(high_x, n_high_x)
+            else:
+                compact.append((low_x, high_x))
+                low_x, high_x = n_low_x, n_high_x
+        compact.append((low_x, high_x))
+
+        if len(compact) != 1:
+            assert (len(compact) == 2)
+            (a, b), (c, d) = compact
+            assert (b + 2 == c)
+            x = b + 1
+            answer = tuning_frequency(x, y)
+            break
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
