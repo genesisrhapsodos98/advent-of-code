@@ -76,11 +76,55 @@ def part1(s):
 
     lib.aoc.give_answer_current(1, height)
 
-def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+def part2(jets):
+    jets = parse_input(s)
+    L = len(jets)
+    jet_i = 0
+    occupied = set()
+    height = 0
+    states = {}
+    top_rows = 50
+    target = 1000000000000
+    rock_i = 0
+
+    while rock_i < target:
+        shape = ROCKS[rock_i % 5]
+        rock = {(x+2, y+height+4) for (x,y) in shape}
+
+        while True:
+            push = jets[jet_i]
+            jet_i = (jet_i + 1) % L
+
+            if push == '<':
+                if can_move(rock, -1, 0, occupied):
+                    rock = {(x-1, y) for (x,y) in rock}
+            else:
+                if can_move(rock, 1, 0, occupied):
+                    rock = {(x+1, y) for (x,y) in rock}
+
+            if can_move(rock, 0, -1, occupied):
+                rock = {(x, y-1) for (x,y) in rock}
+            else:
+                for pos in rock:
+                    occupied.add(pos)
+                    height = max(height, pos[1])
+                break
+
+        key = (rock_i % 5, jet_i, frozenset((x, height-y) for (x,y) in occupied if height-y <= top_rows))
+        if key in states:
+            old_rock_i, old_height = states[key]
+            cycle_len = rock_i - old_rock_i
+            cycle_height = height - old_height
+            cycles = (target - rock_i) // cycle_len
+            rock_i += cycles * cycle_len
+            height += cycles * cycle_height
+            occupied = {(x, y + cycles*cycle_height if y > height - cycle_height else y) for (x,y) in occupied}
+        else:
+            states[key] = (rock_i, height)
+
+        rock_i += 1
+
+    lib.aoc.give_answer_current(2, height)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
