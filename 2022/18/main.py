@@ -43,10 +43,35 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
-    _ = parse_input(s)
+    cubes = parse_input(s)
+
+    min_x = min(c.x for c in cubes) - 1
+    max_x = max(c.x for c in cubes) + 1
+    min_y = min(c.y for c in cubes) - 1
+    max_y = max(c.y for c in cubes) + 1
+    min_z = min(c.z for c in cubes) - 1
+    max_z = max(c.z for c in cubes) + 1
+
+    start = Vec3D(min_x, min_y, min_z)
+    visited = {start}
+    queue = collections.deque([start])
+    external_area = 0
+
     answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+
+    while queue:
+        cube = queue.popleft()
+        for d in dirs:
+            neighbor = cube + d
+            if neighbor in cubes:
+                external_area += 1
+            elif (min_x <= neighbor.x <= max_x and
+                  min_y <= neighbor.y <= max_y and
+                  min_z <= neighbor.z <= max_z and
+                  neighbor not in visited):
+                visited.add(neighbor)
+                queue.append(neighbor)
+    lib.aoc.give_answer_current(2, external_area)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
