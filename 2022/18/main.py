@@ -1,28 +1,21 @@
 import collections
-import functools
-import itertools
-import json
-import math
-import parse
-import re2 as re
-import sympy # sympy.parse_expr, sympy.solve, sympy.Eq
-import sys # sys.setrecursionlimit(1000000)
-import z3 # x = z3.Int('x'); x < 0; (x-1) >= 0
-# z3.If(x >= 0, x, -x); z3.And(); z3.Or(); z3.Not()
-# s = z3.Solver(); solver.add(constraint); s.check(); s.model()[x].as_long()
-# o = z3.Optimize(); o.minimize(x); o.check(); o.model()[x].as_long()
 
 import lib.algorithms
 import lib.aoc
 import lib.cyk
 import lib.graph
-from lib.graphics import *
 import lib.grid
 import lib.hex_coord
 import lib.lazy_dict
 import lib.math
 import lib.ocr
 import lib.parsing
+from lib.graphics import *
+
+
+# z3.If(x >= 0, x, -x); z3.And(); z3.Or(); z3.Not()
+# s = z3.Solver(); solver.add(constraint); s.check(); s.model()[x].as_long()
+# o = z3.Optimize(); o.minimize(x); o.check(); o.model()[x].as_long()
 
 def parse_input(s):
     cubes = set()
@@ -55,7 +48,6 @@ def part2(s):
     start = Vec3D(min_x, min_y, min_z)
     visited = {start}
     queue = collections.deque([start])
-    external_area = 0
 
     answer = 0
 
@@ -64,14 +56,14 @@ def part2(s):
         for d in dirs:
             neighbor = cube + d
             if neighbor in cubes:
-                external_area += 1
+                answer += 1
             elif (min_x <= neighbor.x <= max_x and
                   min_y <= neighbor.y <= max_y and
                   min_z <= neighbor.z <= max_z and
                   neighbor not in visited):
                 visited.add(neighbor)
                 queue.append(neighbor)
-    lib.aoc.give_answer_current(2, external_area)
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
