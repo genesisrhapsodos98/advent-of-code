@@ -27,42 +27,31 @@ import lib.parsing
 def parse_input(s):
     monkeys = {}
     for line in s.splitlines():
-        if not line:
-            continue
-        name, job = line.split(': ')
-        parts = job.split()
-        if len(parts) == 1:
-            monkeys[name] = int(parts[0])
-        else:
-            monkeys[name] = parts
+        monkey, job = line.split(': ')
+        monkeys[monkey] = job
     return monkeys
+
+def to_expr(monkeys, monkey):
+    job = monkeys[monkey].split()
+    if len(job) == 1:
+        return job[0]
+    left, op, right = job
+    return f'({to_expr(monkeys, left)}) {op} ({to_expr(monkeys, right)})'
 
 def part1(s):
     monkeys = parse_input(s)
-    sys.setrecursionlimit(20000)
-
-    @functools.cache
-    def evaluate(name):
-        val = monkeys[name]
-        if isinstance(val, int):
-            return val
-        
-        lhs, op, rhs = val
-        v1 = evaluate(lhs)
-        v2 = evaluate(rhs)
-        
-        if op == '+': return v1 + v2
-        if op == '-': return v1 - v2
-        if op == '*': return v1 * v2
-        if op == '/': return v1 // v2
-
-    answer = evaluate('root')
+    answer = sympy.parse_expr(to_expr(monkeys, 'root'))
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
     monkeys = parse_input(s)
-    # lib.aoc.give_answer_current(2, answer)
+    monkeys['humn'] = 'humn'
+    lhs, _, rhs = monkeys['root'].split()
+    lhs = sympy.parse_expr(to_expr(monkeys, lhs))
+    rhs = sympy.parse_expr(to_expr(monkeys, rhs))
+    answer = sympy.solve(sympy.Eq(lhs, rhs))[0]
+    lib.aoc.give_answer_current(2, answer)
+
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
 part2(INPUT)
