@@ -116,12 +116,12 @@ def part1(s):
     lib.aoc.give_answer_current(1, answer)
 
 def part2(s):
-    pass
     valley = parse_input(s)
     valley.move_optimally(valley.start, valley.goal)
     valley.move_optimally(valley.goal, valley.start)
     valley.move_optimally(valley.start, valley.goal)
-    # lib.aoc.give_answer_current(2, answer)
+    answer = valley.step
+    lib.aoc.give_answer_current(2, answer)
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
