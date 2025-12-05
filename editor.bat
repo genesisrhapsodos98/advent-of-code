@@ -1,1 +1,1 @@
-pycharm %*
+pycharm64 %*
