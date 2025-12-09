@@ -1,3 +1,4 @@
+import itertools
 import lib.aoc
 from shapely.geometry import Polygon
 from shapely.prepared import prep
@@ -15,19 +16,14 @@ def parse_input(s: str):
 def solve(points, inscribed=False):
     polygon = Polygon(points)
     prepared_polygon = prep(polygon)
-
-    n = len(points)
     best_area = 0
 
-    for i in range(n):
-        for j in range(i + 1, n):
-            x1, y1 = points[i]
-            x2, y2 = points[j]
-            min_x, max_x = min(x1, x2), max(x1, x2)
-            min_y, max_y = min(y1, y2), max(y1, y2)
-            rect = Polygon([(min_x, min_y), (max_x, min_y), (max_x, max_y), (min_x, max_y)])
-            if not inscribed or prepared_polygon.covers(rect):
-                best_area = max(best_area, (max_x - min_x + 1) * (max_y - min_y + 1))
+    for (x1, y1), (x2, y2) in itertools.combinations(points, 2):
+        min_x, max_x = min(x1, x2), max(x1, x2)
+        min_y, max_y = min(y1, y2), max(y1, y2)
+        rect = Polygon([(min_x, min_y), (max_x, min_y), (max_x, max_y), (min_x, max_y)])
+        if not inscribed or prepared_polygon.covers(rect):
+            best_area = max(best_area, (max_x - min_x + 1) * (max_y - min_y + 1))
     return best_area
 
 def part1(s: str):
