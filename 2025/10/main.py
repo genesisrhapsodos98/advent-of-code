@@ -28,6 +28,7 @@ def min_presses_lights(target_bits, buttons):
     presses = [z3.Int(f"presses{j}") for j in range(m)]
     for var in presses:
         opt.add(var >= 0)
+        opt.add(var < 2) # Pressing twice does nothing
 
     for light_index in range(n_lights):
         involved_buttons = [
