@@ -62,12 +62,38 @@ def part1(s: str):
     graph = parse_input(s)
     answer = count_paths(graph, "you", "out")
     lib.aoc.give_answer_current(1, answer)
+def count_paths_with_nodes(graph, start, end, must_visit):
+    must_visit = set(must_visit)
+    memo = {}
 
-def part2(s):
-    pass
-    _ = parse_input(s)
-    answer = 0
-    # lib.aoc.give_answer_current(2, answer)
+    def dfs(node, visited_mask):
+        if node == end:
+            return 1 if visited_mask == (1 << len(must_visit)) - 1 else 0
+
+        key = (node, visited_mask)
+        if key in memo:
+            return memo[key]
+
+        next_mask = visited_mask
+        for idx, name in enumerate(must_visit):
+            if node == name:
+                next_mask |= (1 << idx)
+
+        total = 0
+        for nxt in graph.get(node, []):
+            total += dfs(nxt, next_mask)
+
+        memo[key] = total
+        return total
+
+    return dfs(start, 0)
+
+
+def part2(s: str):
+    graph = parse_input(s)
+    answer = count_paths_with_nodes(graph, "svr", "out", ["dac", "fft"])
+    lib.aoc.give_answer_current(2, answer)
+    
 
 INPUT = lib.aoc.get_current_input()
 part1(INPUT)
