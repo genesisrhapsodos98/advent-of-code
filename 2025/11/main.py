@@ -1,4 +1,5 @@
 import collections
+import functools
 
 import lib.aoc
 
@@ -23,16 +24,12 @@ def count_paths(graph, start, end, must_visit=None):
     if must_visit is None:
         must_visit = []
     must_visit = set(must_visit)
-    memo = {}
 
     # DFS with state memoization using a bitmask to track all visited nodes in list of must_visit nodes
+    @functools.cache
     def dfs(node, visited_mask):
         if node == end:
             return 1 if visited_mask == (1 << len(must_visit)) - 1 else 0
-
-        key = (node, visited_mask)
-        if key in memo:
-            return memo[key]
 
         next_mask = visited_mask
         for idx, name in enumerate(must_visit):
@@ -43,7 +40,6 @@ def count_paths(graph, start, end, must_visit=None):
         for nxt in graph.get(node, []):
             total += dfs(nxt, next_mask)
 
-        memo[key] = total
         return total
 
     return dfs(start, 0)
